@@ -38,7 +38,7 @@ function drawGeometry(gl,program,model){
     const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.UNSIGNED_BYTE, false, 0, 0);
+    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
@@ -92,7 +92,6 @@ export function drawScene(gl,program,model) {
     // set the color
     var color = [Math.random(), Math.random(), Math.random(), 1];
     gl.uniform4fv(colorLocation, color);
-
   
     // Create a buffer to put positions in
     var positionBuffer = gl.createBuffer();
