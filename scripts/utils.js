@@ -38,14 +38,40 @@ function drawGeometry(gl,program,model){
     const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-    gl.vertexAttribPointer(colorAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.UNSIGNED_BYTE, false, 0, 0);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
 }
 
+function createShader(gl, type, source) {
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (success) {
+      return shader;
+    }
+}
+
+function resizeCanvasToDisplaySize(canvas)  {
+    // Lookup the size the browser is displaying the canvas.
+    var displayWidth  = canvas.clientWidth;
+    var displayHeight = canvas.clientHeight;
+    
+    // Check if the canvas is not the same size.
+    if (canvas.width  != displayWidth ||
+        canvas.height != displayHeight) {
+
+        // Make the canvas the same size
+        canvas.width  = displayWidth;
+        canvas.height = displayHeight;
+    }
+}
+
+
 export function drawScene(gl,program,model) {
-    webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+    resizeCanvasToDisplaySize(gl.canvas);
 
     // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -62,6 +88,10 @@ export function drawScene(gl,program,model) {
     // lookup uniforms
     var colorLocation = gl.getUniformLocation(program, "u_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+
+    // set the color
+    var color = [Math.random(), Math.random(), Math.random(), 1];
+    gl.uniform4fv(colorLocation, color);
 
   
     // Create a buffer to put positions in
@@ -93,3 +123,28 @@ export function drawScene(gl,program,model) {
     // Draw the geometry.
     drawGeometry(gl,program,model);
 }
+
+export function createProgram(gl) {
+    const program = gl.createProgram();
+
+    //get shader source
+    const vertexShaderSource = document.querySelector("#vertex-shader-3d").text;
+    const fragmentShaderSource = document.querySelector("#fragment-shader-3d").text;
+
+    //create shader
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+  
+    // Check if it linked.
+    const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    if (success) {
+      return program;
+    }
+  
+    console.log(gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+  }

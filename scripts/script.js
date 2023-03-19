@@ -1,4 +1,4 @@
-import { drawScene } from './utils.js';
+import { drawScene, createProgram } from './utils.js';
 import { model_F } from '../models/model_F.js';
 
 const main = () => {
@@ -11,7 +11,7 @@ const main = () => {
     }
   
     // setup GLSL program
-    var program = webglUtils.createProgramFromScripts(gl, ["vertex-shader-3d", "fragment-shader-3d"]);
+    var program = createProgram(gl);
 
     // Draw the scene.
     drawScene(gl,program, model_F);
