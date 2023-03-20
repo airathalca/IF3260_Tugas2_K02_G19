@@ -1,22 +1,4 @@
-
-
-function radToDeg(r) {
-    return r * 180 / Math.PI;
-  }
-
-function degToRad(d) {
-    return d * Math.PI / 180;
-}
-
-function projection (width, height, depth) {
-    // Note: This matrix flips the Y axis so 0 is at the top.
-    return [
-       2 / width, 0, 0, 0,
-       0, -2 / height, 0, 0,
-       0, 0, 2 / depth, 0,
-      -1, 1, 0, 1,
-    ];
-}
+import { mat4 } from "./matrix.js";
 
 function drawGeometry(gl,program,model){
     // Set up positions buffer
@@ -114,7 +96,7 @@ export function drawScene(gl,program,model) {
         positionLocation, size, type, normalize, stride, offset);
 
     // Compute the matrices
-    var matrix = projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    var matrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
