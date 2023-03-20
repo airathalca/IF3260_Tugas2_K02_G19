@@ -73,6 +73,9 @@ export function drawScene(gl,program, model, translation, rotation, scale) {
     // lookup uniforms
     var colorLocation = gl.getUniformLocation(program, "u_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+
+    var color = [Math.random(), Math.random(), Math.random(), 1];
+    gl.uniform4fv(colorLocation, color);
   
     // Create a buffer to put positions in
     var positionBuffer = gl.createBuffer();
