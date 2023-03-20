@@ -73,6 +73,7 @@ export function drawScene(gl,program, model, translation, rotation, scale) {
     // lookup uniforms
     var colorLocation = gl.getUniformLocation(program, "u_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    var projMatrixLocation = gl.getUniformLocation(program, "u_projMatrix");
 
     var color = [Math.random(), Math.random(), Math.random(), 1];
     gl.uniform4fv(colorLocation, color);
@@ -98,14 +99,15 @@ export function drawScene(gl,program, model, translation, rotation, scale) {
         positionLocation, size, type, normalize, stride, offset);
 
     // Compute the matrices
-    var matrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
-    matrix = mat4.multiply(matrix, mat4.translate(translation[0], translation[1], translation[2]));
+    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    var matrix = mat4.translate(translation[0], translation[1], translation[2]);
     matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
     matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
     matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
     matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
 
     // Set the matrix.
+    gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
     // Draw the geometry.
