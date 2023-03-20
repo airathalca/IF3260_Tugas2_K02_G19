@@ -1,4 +1,4 @@
-import { mat4 } from "./matrix.js";
+import mat4 from './matrix.js';
 
 function drawGeometry(gl,program,model){
     // Set up positions buffer
@@ -20,7 +20,7 @@ function drawGeometry(gl,program,model){
     const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(colorAttributeLocation, 3, gl.FLOAT, true, 0, 0);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
@@ -42,8 +42,8 @@ function resizeCanvasToDisplaySize(canvas)  {
     var displayHeight = canvas.clientHeight;
     
     // Check if the canvas is not the same size.
-    if (canvas.width  != displayWidth ||
-        canvas.height != displayHeight) {
+    if (canvas.width  !== displayWidth ||
+        canvas.height !== displayHeight) {
 
         // Make the canvas the same size
         canvas.width  = displayWidth;
@@ -52,14 +52,17 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program,model) {
+export function drawScene(gl,program, model, translation, rotation, scale) {
     resizeCanvasToDisplaySize(gl.canvas);
+    gl.clearDepth(1.0);            // Clear everything
+    gl.enable(gl.DEPTH_TEST);            // Enable depth testing
+    gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
 
-    // Tell WebGL how to convert from clip space to pixels
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    // Set the viewport
+    gl.viewport(0.0, 0.0, gl.canvas.clientWidth, gl.canvas.clientHeight);
 
-    // Clear the canvas.
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // Clear the canvas before we start drawing on it.
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
@@ -70,10 +73,6 @@ export function drawScene(gl,program,model) {
     // lookup uniforms
     var colorLocation = gl.getUniformLocation(program, "u_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
-
-    // set the color
-    var color = [Math.random(), Math.random(), Math.random(), 1];
-    gl.uniform4fv(colorLocation, color);
   
     // Create a buffer to put positions in
     var positionBuffer = gl.createBuffer();
@@ -97,6 +96,11 @@ export function drawScene(gl,program,model) {
 
     // Compute the matrices
     var matrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    matrix = mat4.multiply(matrix, mat4.translate(translation[0], translation[1], translation[2]));
+    matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
+    matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
+    matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
+    matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
