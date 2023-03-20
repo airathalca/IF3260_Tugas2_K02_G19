@@ -1,118 +1,140 @@
-import { drawScene, createProgram } from './utils.js';
-import { model_F } from '../models/model_F.js';
-import { degToRad, radToDeg } from './helper.js';
-import { value, slider, button } from './querySelector.js';
+import mat4 from './matrix.js';
 
-const main = () => {
-  // Get A WebGL context
-  /** @type {HTMLCanvasElement} */
-  var canvas = document.querySelector("#myCanvas");
-  var gl = canvas.getContext("webgl");
-  if (!gl) {
-    return;
-  }
+function drawGeometry(gl,program,model){
+    // Set up positions buffer
+    const positionsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.positions), gl.STATIC_DRAW);
 
-  // setup GLSL program
-  var program = createProgram(gl);
-  var translation = [45, 150, 0];
-  var rotation = [degToRad(40), degToRad(25), degToRad(325)];
-  var scale = [1, 1, 1];
+    // Set up colors buffer
+    const colorsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.colors), gl.STATIC_DRAW);
 
-  var defTranslation = [...translation];
-  var defRotation = [...rotation];
-  var defScale = [...scale];
+    // Set up attribute pointers
+    const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionsBuffer);
+    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
-  //setup UI
-  defaultSlider();
-  slider.slider_transX.oninput = updatePosition(0);
-  slider.slider_transY.oninput = updatePosition(1);
-  slider.slider_transZ.oninput = updatePosition(2);
-  slider.slider_angleX.oninput = updateRotation(0);
-  slider.slider_angleY.oninput = updateRotation(1);
-  slider.slider_angleZ.oninput = updateRotation(2);
-  slider.slider_scaleX.oninput = updateScale(0);
-  slider.slider_scaleY.oninput = updateScale(1);
-  slider.slider_scaleZ.oninput = updateScale(2);
+    const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
+    gl.enableVertexAttribArray(colorAttributeLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+    gl.vertexAttribPointer(colorAttributeLocation, 3, gl.FLOAT, true, 0, 0);
 
-  button.button_reset.onclick = resetState();
-
-  drawScene(gl,program, model_F, translation, rotation, scale);
-
-  function updatePosition(index) {
-    return function(event) {
-      translation[index] = event.target.value;
-      if (index == 0)
-        value.value_transX.innerHTML = translation[index];
-      else if (index == 1)
-        value.value_transY.innerHTML = translation[index];
-      else
-        value.value_transZ.innerHTML = translation[index];
-      drawScene(gl,program, model_F, translation, rotation, scale);
-    };
-  }
-
-  function updateRotation(index) {
-    return function(event) {
-      var angleInDegrees = event.target.value;
-      var angleInRadians = angleInDegrees * Math.PI / 180;
-      rotation[index] = angleInRadians;
-      if (index == 0)
-        value.value_angleX.innerHTML = angleInDegrees;
-      else if (index == 1)
-        value.value_angleY.innerHTML = angleInDegrees;
-      else
-        value.value_angleZ.innerHTML = angleInDegrees;
-      drawScene(gl,program, model_F, translation, rotation, scale);
-    };
-  }
-
-  function updateScale(index) {
-    return function(event) {
-      scale[index] = event.target.value;
-      if (index == 0)
-        value.value_scaleX.innerHTML = scale[index];
-      else if (index == 1)
-        value.value_scaleY.innerHTML = scale[index];
-      else
-        value.value_scaleZ.innerHTML = scale[index];
-      drawScene(gl,program, model_F, translation, rotation, scale);
-    };
-  }
-
-  function defaultSlider() {
-    // set default value innerHTML
-    value.value_transX.innerHTML = defTranslation[0];
-    value.value_transY.innerHTML = defTranslation[1];
-    value.value_transZ.innerHTML = defTranslation[2];
-    value.value_angleX.innerHTML = radToDeg(defRotation[0]);
-    value.value_angleY.innerHTML = radToDeg(defRotation[1]);
-    value.value_angleZ.innerHTML = radToDeg(defRotation[2]);
-    value.value_scaleX.innerHTML = defScale[0];
-    value.value_scaleY.innerHTML = defScale[1];
-    value.value_scaleZ.innerHTML = defScale[2];
-
-    // set default value slider
-    slider.slider_transX.value = defTranslation[0];
-    slider.slider_transY.value = defTranslation[1];
-    slider.slider_transZ.value = defTranslation[2];
-    slider.slider_angleX.value = radToDeg(defRotation[0]);
-    slider.slider_angleY.value = radToDeg(defRotation[1]);
-    slider.slider_angleZ.value = radToDeg(defRotation[2]);
-    slider.slider_scaleX.value = defScale[0];
-    slider.slider_scaleY.value = defScale[1];
-    slider.slider_scaleZ.value = defScale[2];
-  }
-
-  function resetState() {
-    return function(event) {
-      translation = [...defTranslation];
-      rotation = [...defRotation];
-      scale = [...defScale];
-      defaultSlider();
-      drawScene(gl,program, model_F, translation, rotation, scale);
-    }
-  }
+    // Draw
+    gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
 }
 
+function createShader(gl, type, source) {
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (success) {
+      return shader;
+    }
+}
+
+function resizeCanvasToDisplaySize(canvas)  {
+    // Lookup the size the browser is displaying the canvas.
+    var displayWidth  = canvas.clientWidth;
+    var displayHeight = canvas.clientHeight;
+    
+    // Check if the canvas is not the same size.
+    if (canvas.width  !== displayWidth ||
+        canvas.height !== displayHeight) {
+
+        // Make the canvas the same size
+        canvas.width  = displayWidth;
+        canvas.height = displayHeight;
+    }
+}
+
+
+export function drawScene(gl,program, model, translation, rotation, scale) {
+    resizeCanvasToDisplaySize(gl.canvas);
+    gl.clearDepth(1.0);            // Clear everything
+    gl.enable(gl.DEPTH_TEST);            // Enable depth testing
+    gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
+
+    // Set the viewport
+    gl.viewport(0.0, 0.0, gl.canvas.clientWidth, gl.canvas.clientHeight);
+
+    // Clear the canvas before we start drawing on it.
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Tell it to use our program (pair of shaders)
+    gl.useProgram(program);
+
+    // look up where the vertex data needs to go.
+    var positionLocation = gl.getAttribLocation(program, "a_position");
   
-window.onload = main
+    // lookup uniforms
+    var colorLocation = gl.getUniformLocation(program, "u_color");
+    var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    var projMatrixLocation = gl.getUniformLocation(program, "u_projMatrix");
+
+    var color = [Math.random(), Math.random(), Math.random(), 1];
+    gl.uniform4fv(colorLocation, color);
+  
+    // Create a buffer to put positions in
+    var positionBuffer = gl.createBuffer();
+    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    // Turn on the attribute
+    gl.enableVertexAttribArray(positionLocation);
+
+    // Bind the position buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+    var size = 3;          // 3 components per iteration
+    var type = gl.FLOAT;   // the data is 32bit floats
+    var normalize = false; // don't normalize the data
+    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+    var offset = 0;        // start at the beginning of the buffer
+    gl.vertexAttribPointer(
+        positionLocation, size, type, normalize, stride, offset);
+
+    // Compute the matrices
+    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    var matrix = mat4.translate(translation[0], translation[1], translation[2]);
+    matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
+    matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
+    matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
+    matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
+
+    // Set the matrix.
+    gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
+    gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+    // Draw the geometry.
+    drawGeometry(gl,program,model);
+}
+
+export function createProgram(gl) {
+    const program = gl.createProgram();
+
+    //get shader source
+    const vertexShaderSource = document.querySelector("#vertex-shader-3d").text;
+    const fragmentShaderSource = document.querySelector("#fragment-shader-3d").text;
+
+    //create shader
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+  
+    // Check if it linked.
+    const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    if (success) {
+      return program;
+    }
+  
+    console.log(gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+  }
