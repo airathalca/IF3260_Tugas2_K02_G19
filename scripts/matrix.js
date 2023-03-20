@@ -1,4 +1,5 @@
-const mat4 = {
+var mat4 = {
+
   projection: function(width, height, depth) {
     return [
       2 / width, 0, 0, 0,
@@ -32,8 +33,8 @@ const mat4 = {
 
     return [
       1, 0, 0, 0,
-      0, cosine,-sin, 0,
-      0, sin, cosine, 0,
+      0, cosine, sin, 0,
+      0, -sin, cosine, 0,
       0, 0, 0, 1,
     ];
   },
@@ -43,10 +44,10 @@ const mat4 = {
     var sin = Math.sin(angleInRadians);
 
     return [
-       cosine, 0, sin, 0,
-       0, 1, 0, 0,
-      -sin, 0, cosine, 0,
-       0, 0, 0, 1,
+      cosine, 0, -sin, 0,
+      0, 1, 0, 0,
+      sin, 0, cosine, 0,
+      0, 0, 0, 1,
     ];
   },
 
@@ -55,10 +56,10 @@ const mat4 = {
     var sin = Math.sin(angleInRadians);
 
     return [
-       cosine,-sin, 0, 0,
-       sin, cosine, 0, 0,
-       0, 0, 1, 0,
-       0, 0, 0, 1,
+      cosine, sin, 0, 0,
+      -sin, cosine, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1,
     ];
   },
 
@@ -72,14 +73,14 @@ const mat4 = {
   },
 
   multiply: function(a, b) {
-    result = [];
+    var result = mat4.identity();
     for (var i = 0; i < 4; i++) {
       for (var j = 0; j < 4; j++) {
         var sum = 0;
         for (var k = 0; k < 4; k++) {
-          sum += a[i * 4 + k] * b[k * 4 + j];
+          sum += b[i * 4 + k] * a[k * 4 + j];
         }
-        result.push(sum);
+        result[i * 4 + j] = sum;
       }
     }
     return result;
@@ -94,11 +95,11 @@ const mat4 = {
     ];
   },
 
-  getCofactor: function(m, r, c) {
+  getCofactor: function(m, r, cosine) {
     var result = [];
     for (var i = 0; i < 4; i++) {
       for (var j = 0; j < 4; j++) {
-        if (i != r && j != c) {
+        if (i != r && j != cosine) {
           result.push(m[i * 4 + j]);
         }
       }
@@ -106,8 +107,8 @@ const mat4 = {
     return result;
   },
 
-  getMinor: function(m, r, c) {
-    var cofactor = mat4.getCofactor(m, r, c);
+  getMinor: function(m, r, cosine) {
+    var cofactor = mat4.getCofactor(m, r, cosine);
     //calculate determinant 3x3
     var result = 0;
     result += cofactor[0] * cofactor[4] * cofactor[8] + 
@@ -117,7 +118,7 @@ const mat4 = {
     cofactor[1] * cofactor[3] * cofactor[8] +
     cofactor[0] * cofactor[5] * cofactor[7];
 
-    return result * Math.pow(-1, r + c);
+    return result * Math.pow(-1, r + cosine);
   },
 
   determinant: function(m) {
@@ -149,6 +150,6 @@ const mat4 = {
     }
     return adj;
   },
-}
+};
 
-export { mat4 };
+export default mat4;
