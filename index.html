@@ -41,70 +41,88 @@
 	<div class="toolbar">
 		<div id="uiContainer">
       <div id="ui">
-        <div class="outer">
-          <div class="label">translation-x</div>
-          <div id="value-x"></div>
-          <input id="slider-x" type="range" min="0" max="720" step="1"/>
+        <div class="tools-label">TRANSLATE</div>
+        <div class="tools">
+          <div class="outer">
+            <div class="label">translation-x</div>
+            <div id="value-x"></div>
+            <input id="slider-x" type="range" min="0" max="720" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">translation-y</div>
+            <div id="value-y"></div>
+            <input id="slider-y" type="range" min="0" max="720" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">translation-z</div>
+            <div id="value-z"></div>
+            <input id="slider-z" type="range" min="0" max="720" step="1"/>
+          </div>
         </div>
-        <div class="outer">
-          <div class="label">translation-y</div>
-          <div id="value-y"></div>
-          <input id="slider-y" type="range" min="0" max="720" step="1"/>
+        <hr>
+        <div class="tools-label">ROTATE</div>
+        <div class="tools">
+          <div class="outer">
+            <div class="label">rotation-X</div>
+            <div id="value-angleX"></div>
+            <input id="slider-angleX" type="range" min="0" max="360" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">rotation-Y</div>
+            <div id="value-angleY"></div>
+            <input id="slider-angleY" type="range" min="0" max="360" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">rotation-Z</div>
+            <div id="value-angleZ"></div>
+            <input id="slider-angleZ" type="range" min="0" max="360" step="1"/>
+          </div>
         </div>
-        <div class="outer">
-          <div class="label">translation-z</div>
-          <div id="value-z"></div>
-          <input id="slider-z" type="range" min="0" max="720" step="1"/>
+        <hr>
+        <div class="tools-label">SCALE</div>
+        <div class="tools">
+          <div class="outer">
+            <div class="label">scaling-X</div>
+            <div id="value-scaleX"></div>
+            <input id="slider-scaleX" type="range" min="-5" max="5" step="0.01"/>
+          </div>
+          <div class="outer">
+            <div class="label">scaling-Y</div>
+            <div id="value-scaleY"></div>
+            <input id="slider-scaleY" type="range" min="-5" max="5" step="0.01"/>
+          </div>
+          <div class="outer">
+            <div class="label">scaling-Z</div>
+            <div id="value-scaleZ"></div>
+            <input id="slider-scaleZ" type="range" min="-5" max="5" step="0.01"/>
+          </div>
         </div>
-        <div class="outer">
-          <div class="label">rotation-X</div>
-          <div id="value-angleX"></div>
-          <input id="slider-angleX" type="range" min="0" max="360" step="1"/>
+        <hr>
+        <div class="tools-label">CAMERA</div>
+        <div class="tools">
+          <div class="outer">
+            <div class="label">camera-X</div>
+            <div id="value-cameraX"></div>
+            <input id="slider-cameraX" type="range" min="-360" max="360" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">camera-Y</div>
+            <div id="value-cameraY"></div>
+            <input id="slider-cameraY" type="range" min="-360" max="360" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">camera-Z</div>
+            <div id="value-cameraZ"></div>
+            <input id="slider-cameraZ" type="range" min="-360" max="360" step="1"/>
+          </div>
         </div>
-        <div class="outer">
-          <div class="label">rotation-Y</div>
-          <div id="value-angleY"></div>
-          <input id="slider-angleY" type="range" min="0" max="360" step="1"/>
-        </div>
-        <div class="outer">
-          <div class="label">rotation-Z</div>
-          <div id="value-angleZ"></div>
-          <input id="slider-angleZ" type="range" min="0" max="360" step="1"/>
-        </div>
-        <div class="outer">
-          <div class="label">scaling-X</div>
-          <div id="value-scaleX"></div>
-          <input id="slider-scaleX" type="range" min="-5" max="5" step="0.01"/>
-        </div>
-        <div class="outer">
-          <div class="label">scaling-Y</div>
-          <div id="value-scaleY"></div>
-          <input id="slider-scaleY" type="range" min="-5" max="5" step="0.01"/>
-        </div>
-        <div class="outer">
-          <div class="label">scaling-Z</div>
-          <div id="value-scaleZ"></div>
-          <input id="slider-scaleZ" type="range" min="-5" max="5" step="0.01"/>
-        </div>
-        <div class="outer">
-          <div class="label">Zoom</div>
-          <div id="value-zoom"></div>
-          <input id="slider-zoom" type="range" min="0.1" max="5" step="0.1"/>
-        </div>
-        <div class="outer">
-          <div class="label">camera-X</div>
-          <div id="value-cameraX"></div>
-          <input id="slider-cameraX" type="range" min="-360" max="360" step="1"/>
-        </div>
-        <div class="outer">
-          <div class="label">camera-Y</div>
-          <div id="value-cameraY"></div>
-          <input id="slider-cameraY" type="range" min="-360" max="360" step="1"/>
-        </div>
-        <div class="outer">
-          <div class="label">camera-Z</div>
-          <div id="value-cameraZ"></div>
-          <input id="slider-cameraZ" type="range" min="-360" max="360" step="1"/>
+        <hr>
+        <div class="tools-label">ZOOM</div>
+        <div class="tools">
+          <div class="outer">
+            <div id="value-zoom"></div>
+            <input id="slider-zoom" type="range" min="0.1" max="5" step="0.1"/>
+          </div>
         </div>
         <div>
           <input type="file" id="file" accept=".json" />

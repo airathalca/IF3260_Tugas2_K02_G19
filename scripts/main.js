@@ -157,7 +157,7 @@ const main = () => {
         value.value_cameraY.innerHTML = angleInDegrees;
       else
         value.value_cameraZ.innerHTML = angleInDegrees;
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians);
+      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
     };
   }
 
@@ -205,7 +205,6 @@ const main = () => {
     scale = [...defScale];
     zoom = defZoom;
     cameraAngleRadians = [...defCameraAngleRadians];
-    console.log(defCameraAngleRadians)
     defaultSlider();
     drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
   }
