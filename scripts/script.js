@@ -53,7 +53,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale, zoom, angle) {
+export function drawScene(gl,program, model, translation, rotation, scale, zoom, angle, center) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.DEPTH_TEST);            // Enable depth testing
@@ -102,10 +102,12 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     // Compute the matrices
     var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
     var matrix = mat4.translate(translation[0], translation[1], translation[2]);
+    matrix = mat4.multiply(matrix, mat4.translate(center[0], center[1], center[2]));
     matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
     matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
     matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
-    matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
+    matrix = mat4.multiply(matrix, mat4.scale(scale[0]*zoom, scale[1]*zoom, scale[2]*zoom));
+    matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
 
     var target = [0, 0, 0];
     var eye = [0, 0, 1];
@@ -125,9 +127,6 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     var viewMatrix = mat4.inverse(cameraMatrix);
 
     projMatrix = mat4.multiply(projMatrix, viewMatrix);
-
-    // Zoom
-    matrix = mat4.multiply(matrix, mat4.scale(zoom, zoom, zoom));
 
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
