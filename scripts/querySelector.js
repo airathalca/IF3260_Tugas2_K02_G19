@@ -28,4 +28,6 @@ export var slider = {
 
 export var button = {
   button_reset: document.querySelector("#reset"),
+  input_file: document.querySelector("#file"),
+  button_save: document.querySelector("#save"),
 }

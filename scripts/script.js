@@ -21,7 +21,7 @@ function drawGeometry(gl,program,model){
     const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-    gl.vertexAttribPointer(colorAttributeLocation, 3, gl.FLOAT, true, 0, 0);
+    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
@@ -100,7 +100,7 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
         positionLocation, size, type, normalize, stride, offset);
 
     // Compute the matrices
-    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1000);
+    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
     var matrix = mat4.translate(translation[0], translation[1], translation[2]);
     matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
     matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));

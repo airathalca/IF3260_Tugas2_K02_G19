@@ -187,6 +187,18 @@ var mat4 = {
     }
     return adj;
   },
+
+  multiplyVector: function(m, v) {
+    var result = [];
+    for (var i = 0; i < 4; i++) {
+      var sum = 0;
+      for (var j = 0; j < 4; j++) {
+        sum += v[j] * m[i + j * 4];
+      }
+      result.push(sum);
+    }
+    return result;
+  }
 };
 
 export default mat4;
