@@ -20,14 +20,14 @@ const main = () => {
   var rotation = [degToRad(0), degToRad(0), degToRad(0)];
   var scale = [1, 1, 1];
   var zoom = 1.0;
-  var cameraAngleRadians = degToRad(0);
+  var cameraAngleRadians = [degToRad(0), degToRad(0), degToRad(0)];
   var center = centerpoint();
 
   var defTranslation = [...translation];
   var defRotation = [...rotation];
   var defScale = [...scale];
   var defZoom = 1.0;
-  var defCameraAngleRadians = degToRad(0);
+  var defCameraAngleRadians = [...cameraAngleRadians];
 
   //setup UI
   defaultSlider();
@@ -41,7 +41,9 @@ const main = () => {
   slider.slider_scaleY.oninput = updateScale(1);
   slider.slider_scaleZ.oninput = updateScale(2);
   slider.slider_zoom.oninput = updateZoom();
-  slider.slider_camera.oninput = updateCameraAngle();
+  slider.slider_cameraX.oninput = updateCameraAngle(0);
+  slider.slider_cameraY.oninput = updateCameraAngle(1);
+  slider.slider_cameraZ.oninput = updateCameraAngle(2);
 
   button.button_reset.onclick = resetState();
   button.button_save.onclick = save();
@@ -144,11 +146,18 @@ const main = () => {
     };
   }
 
-  function updateCameraAngle() {
+  function updateCameraAngle(index) {
     return function(event) {
-      cameraAngleRadians = degToRad(event.target.value);
-      value.value_camera.innerHTML = Math.round(radToDeg(cameraAngleRadians));
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      var angleInDegrees = event.target.value;
+      var angleInRadians = angleInDegrees * Math.PI / 180;
+      cameraAngleRadians[index] = angleInRadians;
+      if (index == 0)
+        value.value_cameraX.innerHTML = angleInDegrees;
+      else if (index == 1)
+        value.value_cameraY.innerHTML = angleInDegrees;
+      else
+        value.value_cameraZ.innerHTML = angleInDegrees;
+      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians);
     };
   }
 
@@ -164,7 +173,9 @@ const main = () => {
     value.value_scaleY.innerHTML = defScale[1];
     value.value_scaleZ.innerHTML = defScale[2];
     value.value_zoom.innerHTML = zoom;
-    value.value_camera.innerHTML = radToDeg(cameraAngleRadians);
+    value.value_cameraX.innerHTML = radToDeg(cameraAngleRadians[0]);
+    value.value_cameraY.innerHTML = radToDeg(cameraAngleRadians[1]);
+    value.value_cameraZ.innerHTML = radToDeg(cameraAngleRadians[2]);
 
     // set default value slider
     slider.slider_transX.value = defTranslation[0];
@@ -177,7 +188,9 @@ const main = () => {
     slider.slider_scaleY.value = defScale[1];
     slider.slider_scaleZ.value = defScale[2];
     slider.slider_zoom.value = zoom;
-    slider.slider_camera.value = radToDeg(cameraAngleRadians);
+    slider.slider_cameraX.value = radToDeg(cameraAngleRadians[0]);
+    slider.slider_cameraY.value = radToDeg(cameraAngleRadians[1]);
+    slider.slider_cameraZ.value = radToDeg(cameraAngleRadians[2]);
   }
 
   function resetState() {
@@ -191,7 +204,8 @@ const main = () => {
     rotation = [...defRotation];
     scale = [...defScale];
     zoom = defZoom;
-    cameraAngleRadians = defCameraAngleRadians;
+    cameraAngleRadians = [...defCameraAngleRadians];
+    console.log(defCameraAngleRadians)
     defaultSlider();
     drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
   }
