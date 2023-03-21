@@ -9,6 +9,7 @@ export var value = {
   value_scaleY: document.querySelector("#value-scaleY"),
   value_scaleZ: document.querySelector("#value-scaleZ"),
   value_zoom: document.querySelector("#value-zoom"),
+  value_camera: document.querySelector("#value-camera"),
 }
 
 export var slider = {
@@ -22,6 +23,7 @@ export var slider = {
   slider_scaleY: document.querySelector("#slider-scaleY"),
   slider_scaleZ: document.querySelector("#slider-scaleZ"),
   slider_zoom: document.querySelector("#slider-zoom"),
+  slider_camera: document.querySelector("#slider-camera"),
 }
 
 export var button = {

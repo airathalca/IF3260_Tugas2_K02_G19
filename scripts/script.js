@@ -1,3 +1,4 @@
+import { degToRad } from './helper.js';
 import mat4 from './matrix.js';
 
 function drawGeometry(gl,program,model){
@@ -52,7 +53,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale, zoom) {
+export function drawScene(gl,program, model, translation, rotation, scale, zoom, angle) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.DEPTH_TEST);            // Enable depth testing
@@ -99,12 +100,31 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom)
         positionLocation, size, type, normalize, stride, offset);
 
     // Compute the matrices
-    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1000);
     var matrix = mat4.translate(translation[0], translation[1], translation[2]);
     matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
     matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
     matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
     matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
+
+    var target = [0, 0, 0];
+    var eye = [0, 0, 1];
+    var up = [0, 1, 0];
+
+    // Camera Rotation
+    var cameraMatrix = mat4.yRotate(angle);
+    cameraMatrix = mat4.multiply(cameraMatrix, mat4.translate(...eye))
+
+    var cameraPosition = [
+        cameraMatrix[12],
+        cameraMatrix[13],
+        cameraMatrix[14],
+    ];
+
+    cameraMatrix = mat4.lookAt(cameraPosition, target, up);
+    var viewMatrix = mat4.inverse(cameraMatrix);
+
+    projMatrix = mat4.multiply(projMatrix, viewMatrix);
 
     // Zoom
     matrix = mat4.multiply(matrix, mat4.scale(zoom, zoom, zoom));
