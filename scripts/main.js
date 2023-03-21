@@ -17,6 +17,7 @@ const main = () => {
   var translation = [45, 150, 0];
   var rotation = [degToRad(40), degToRad(25), degToRad(325)];
   var scale = [1, 1, 1];
+  var zoom = 1.0;
 
   var defTranslation = [...translation];
   var defRotation = [...rotation];
@@ -33,10 +34,11 @@ const main = () => {
   slider.slider_scaleX.oninput = updateScale(0);
   slider.slider_scaleY.oninput = updateScale(1);
   slider.slider_scaleZ.oninput = updateScale(2);
+  slider.slider_zoom.oninput = updateZoom();
 
   button.button_reset.onclick = resetState();
 
-  drawScene(gl,program, model_F, translation, rotation, scale);
+  drawScene(gl,program, model_F, translation, rotation, scale, zoom);
 
   function updatePosition(index) {
     return function(event) {
@@ -47,7 +49,7 @@ const main = () => {
         value.value_transY.innerHTML = translation[index];
       else
         value.value_transZ.innerHTML = translation[index];
-      drawScene(gl,program, model_F, translation, rotation, scale);
+      drawScene(gl,program, model_F, translation, rotation, scale, zoom);
     };
   }
 
@@ -62,7 +64,7 @@ const main = () => {
         value.value_angleY.innerHTML = angleInDegrees;
       else
         value.value_angleZ.innerHTML = angleInDegrees;
-      drawScene(gl,program, model_F, translation, rotation, scale);
+      drawScene(gl,program, model_F, translation, rotation, scale, zoom);
     };
   }
 
@@ -75,7 +77,15 @@ const main = () => {
         value.value_scaleY.innerHTML = scale[index];
       else
         value.value_scaleZ.innerHTML = scale[index];
-      drawScene(gl,program, model_F, translation, rotation, scale);
+      drawScene(gl,program, model_F, translation, rotation, scale, zoom);
+    };
+  }
+
+  function updateZoom() {
+    return function(event) {
+      zoom = event.target.value;
+      value.value_zoom.innerHTML = zoom;
+      drawScene(gl,program, model_F, translation, rotation, scale, zoom);
     };
   }
 
@@ -90,6 +100,7 @@ const main = () => {
     value.value_scaleX.innerHTML = defScale[0];
     value.value_scaleY.innerHTML = defScale[1];
     value.value_scaleZ.innerHTML = defScale[2];
+    value.value_zoom.innerHTML = zoom;
 
     // set default value slider
     slider.slider_transX.value = defTranslation[0];
@@ -101,6 +112,7 @@ const main = () => {
     slider.slider_scaleX.value = defScale[0];
     slider.slider_scaleY.value = defScale[1];
     slider.slider_scaleZ.value = defScale[2];
+    slider.slider_zoom.value = zoom;
   }
 
   function resetState() {
@@ -109,7 +121,7 @@ const main = () => {
       rotation = [...defRotation];
       scale = [...defScale];
       defaultSlider();
-      drawScene(gl,program, model_F, translation, rotation, scale);
+      drawScene(gl,program, model_F, translation, rotation, scale, zoom);
     }
   }
 }

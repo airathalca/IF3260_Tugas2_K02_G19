@@ -52,7 +52,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale) {
+export function drawScene(gl,program, model, translation, rotation, scale, zoom) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.DEPTH_TEST);            // Enable depth testing
@@ -105,6 +105,9 @@ export function drawScene(gl,program, model, translation, rotation, scale) {
     matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
     matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
     matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
+
+    // Zoom
+    matrix = mat4.multiply(matrix, mat4.scale(zoom, zoom, zoom));
 
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
