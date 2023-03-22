@@ -18,7 +18,7 @@ const main = () => {
   var params = {
     hollowObject: defaultHollow,
     program: prog,
-    translation: [250, 250, 0],
+    translation: [0, 0, 0],
     rotation: [degToRad(0), degToRad(0), degToRad(0)],
     scale: [1, 1, 1],
     zoom: 1.0,
