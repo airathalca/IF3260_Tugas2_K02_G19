@@ -1,10 +1,22 @@
+import { degToRad } from './helper.js';
 import mat4 from './matrix.js';
 
 function drawGeometry(gl,program,model){
     // Set up positions buffer
     const positionsBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionsBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.positions), gl.STATIC_DRAW);
+    var obj = [];
+    var matrix = mat4.xRotate(Math.PI);
+    matrix = mat4.multiply(matrix, mat4.translate(-50, -75, -15));
+
+    for (var ii = 0; ii < model.positions.length; ii += 3) {
+      var vector = mat4.multiplyVector(matrix, [model.positions[ii + 0], model.positions[ii + 1], model.positions[ii + 2], 1]);
+      obj.push(vector[0]);
+      obj.push(vector[1]);
+      obj.push(vector[2]);
+    }
+    console.log(obj);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj), gl.STATIC_DRAW);
 
     // Set up colors buffer
     const colorsBuffer = gl.createBuffer();
@@ -25,15 +37,12 @@ function drawGeometry(gl,program,model){
     const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
-    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, true, 0, 0);
 
     const normalAttributeLocation = gl.getAttribLocation(program, 'a_normal');
     gl.enableVertexAttribArray(normalAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, normalsBuffer);
     gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    // Draw
-    gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
 }
 
 function createShader(gl, type, source) {
@@ -79,37 +88,36 @@ export function drawScene(gl, params) {
     gl.useProgram(params.program);
   
     // lookup uniforms
-    var matrixLocation = gl.getUniformLocation(params.program, "u_matrix");
-    var projMatrixLocation = gl.getUniformLocation(params.program, "u_projMatrix");
+    var modelLocation = gl.getUniformLocation(params.program, "u_modelMatrix");
+    var viewLocation = gl.getUniformLocation(params.program, "u_viewMatrix");
+    var projLocation = gl.getUniformLocation(params.program, "u_projMatrix");
     var normalLocation = gl.getUniformLocation(params.program, "u_normal");
     var shadingBool = gl.getUniformLocation(params.program, "u_shading");
 
-    // Compute the matrices
+    // Compute projection matrix
     var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
-    var matrix = mat4.translate(params.translation[0], params.translation[1], params.translation[2]);
-    matrix = mat4.multiply(matrix, mat4.translate(params.center[0], params.center[1], params.center[2]));
-    matrix = mat4.multiply(matrix, mat4.xRotate(params.rotation[0]));
-    matrix = mat4.multiply(matrix, mat4.yRotate(params.rotation[1]));
-    matrix = mat4.multiply(matrix, mat4.zRotate(params.rotation[2]));
-    matrix = mat4.multiply(matrix, mat4.scale(params.scale[0]*params.zoom, params.scale[1]*params.zoom, params.scale[2]*params.zoom));
-    matrix = mat4.multiply(matrix, mat4.translate(-params.center[0], -params.center[1], -params.center[2]));
 
+    // compute model matrix
+    var modelMatrix = mat4.translate(params.translation[0], params.translation[1], params.translation[2]);
+    modelMatrix = mat4.multiply(modelMatrix, mat4.translate(params.center[0], params.center[1], params.center[2]));
+    modelMatrix = mat4.multiply(modelMatrix, mat4.xRotate(params.rotation[0]));
+    modelMatrix = mat4.multiply(modelMatrix, mat4.yRotate(params.rotation[1]));
+    modelMatrix = mat4.multiply(modelMatrix, mat4.zRotate(params.rotation[2]));
+    modelMatrix = mat4.multiply(modelMatrix, mat4.scale(params.scale[0]*params.zoom, params.scale[1]*params.zoom, params.scale[2]*params.zoom));
+    modelMatrix = mat4.multiply(modelMatrix, mat4.translate(-params.center[0], -params.center[1], -params.center[2]));
+
+    // compute view matrix
     var eye = [0, 0, params.cameraRadius];
-    var target = [0, 0, 0];
-    var up = [0, 1, 0];
-
-    // Camera Rotation
-    var cameraMatrix = mat4.lookAt(eye, target, up);
-
-    var viewMatrix = mat4.inverse(cameraMatrix);
-    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, 0));
+    // var target = [0, 0, 0];
+    // var up = [0, 1, 0];
+    var viewMatrix = mat4.identity();
     viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(params.cameraAngleRadians[0]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(params.cameraAngleRadians[1]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(-gl.canvas.clientWidth / 2, -gl.canvas.clientHeight / 2, 0));
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(...eye));
+    viewMatrix = mat4.inverse(viewMatrix);
 
-    var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
+    var modelViewMatrix = mat4.multiply(viewMatrix, modelMatrix);
 
     // Compute the normal matrix
     var normalMatrix = mat4.inverse(modelViewMatrix);
@@ -120,14 +128,25 @@ export function drawScene(gl, params) {
     normalMatrix = mat4.multiply(normalMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
 
     // Set the matrix.
-    gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
-    gl.uniformMatrix4fv(matrixLocation, false, modelViewMatrix);
+    gl.uniformMatrix4fv(projLocation, false, projMatrix);
+    gl.uniformMatrix4fv(viewLocation, false, viewMatrix);
     gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
     gl.uniform1i(shadingBool, params.shading);
 
     // Draw the geometry.
     drawGeometry(gl, params.program, params.hollowObject);
 
+    // create 5 model
+    for (let i = 0; i < 5; i++) {
+      var angle = i * Math.PI * 2 / 5;
+      var x = Math.cos(angle) * 100;
+      var y = Math.sin(angle) * 100;
+      var matrix = mat4.multiply(modelMatrix, mat4.translate(x, 0, y));
+      matrix = mat4.multiply(matrix, mat4.scale(0.5, 0.5, 0.5));
+      gl.uniformMatrix4fv(modelLocation, false, matrix);
+
+      gl.drawArrays(gl.TRIANGLES, 0, params.hollowObject.positions.length/3);
+    }
     return modelViewMatrix;
 }
 

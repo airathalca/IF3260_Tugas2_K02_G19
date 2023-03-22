@@ -23,7 +23,7 @@ const main = () => {
     scale: [1, 1, 1],
     zoom: 1.0,
     cameraAngleRadians: [degToRad(0), degToRad(0), degToRad(0)],
-    cameraRadius: 1.0,
+    cameraRadius: 200.0,
     shading: false,
     center: centerpoint(defaultHollow),
   }
@@ -34,7 +34,7 @@ const main = () => {
     scale: [...params.scale],
     zoom: 1.0,
     cameraAngleRadians: [...params.cameraAngleRadians],
-    cameraRadius: 1.0,
+    cameraRadius: 200.0,
   }
 
   //setup UI
