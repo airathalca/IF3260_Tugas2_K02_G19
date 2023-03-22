@@ -83,6 +83,7 @@ export function drawScene(gl, params) {
     var projMatrixLocation = gl.getUniformLocation(params.program, "u_projMatrix");
     var normalLocation = gl.getUniformLocation(params.program, "u_normal");
     var shadingBool = gl.getUniformLocation(params.program, "u_shading");
+    var fudgeLocation = gl.getUniformLocation(params.program, "u_fudgeFactor");
 
     // Compute the matrices
     var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
