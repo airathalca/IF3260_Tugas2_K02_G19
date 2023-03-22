@@ -62,7 +62,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, center, shading) {
+export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, cameraRadius, center, shading) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.CULL_FACE);
@@ -94,7 +94,7 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     matrix = mat4.multiply(matrix, mat4.scale(scale[0]*zoom, scale[1]*zoom, scale[2]*zoom));
     matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
 
-    var eye = [0, 0, 5];
+    var eye = [0, 0, cameraRadius];
     var target = [0, 0, 0];
     var up = [0, 1, 0];
 
@@ -107,6 +107,7 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(camera[1]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(camera[2]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(-gl.canvas.clientWidth / 2, -gl.canvas.clientHeight / 2, 0));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(...eye));
 
     var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
 

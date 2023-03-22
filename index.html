@@ -22,7 +22,7 @@
         // Pass the color to the fragment shader.
         v_color = a_color;
 
-        highp vec3 ambient_light = vec3(0.3, 0.3, 0.3);
+        highp vec3 ambient_light = vec3(0.5, 0.5, 0.5);
         highp vec3 directional_light_color = vec3(1, 1, 1);
         highp vec3 directional_light_direction = vec3(0.85, 0.8, 0.75);
         highp vec4 transformed_normal = u_normal * vec4(a_normal, 1.0);
@@ -132,6 +132,11 @@
             <div class="label">camera-Z</div>
             <div id="value-cameraZ"></div>
             <input id="slider-cameraZ" type="range" min="-360" max="360" step="1"/>
+          </div>
+          <div class="outer">
+            <div class="label">camera-radius</div>
+            <div id="value-cameraR"></div>
+            <input id="slider-cameraR" type="range" min="1" max="360" step="1"/>
           </div>
         </div>
         <hr>
