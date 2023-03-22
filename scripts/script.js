@@ -1,4 +1,3 @@
-import { degToRad } from './helper.js';
 import mat4 from './matrix.js';
 
 function drawGeometry(gl,program,model){
@@ -12,6 +11,11 @@ function drawGeometry(gl,program,model){
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.colors), gl.STATIC_DRAW);
 
+    // Set up normals buffer
+    const normalsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.normals), gl.STATIC_DRAW);
+
     // Set up attribute pointers
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
     gl.enableVertexAttribArray(positionAttributeLocation);
@@ -22,6 +26,11 @@ function drawGeometry(gl,program,model){
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+
+    const normalAttributeLocation = gl.getAttribLocation(program, 'a_normal');
+    gl.enableVertexAttribArray(normalAttributeLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalsBuffer);
+    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
@@ -56,6 +65,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, center) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
+    gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);            // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
 
@@ -67,37 +77,12 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
-
-    // look up where the vertex data needs to go.
-    var positionLocation = gl.getAttribLocation(program, "a_position");
   
     // lookup uniforms
-    var colorLocation = gl.getUniformLocation(program, "u_color");
     var matrixLocation = gl.getUniformLocation(program, "u_matrix");
     var projMatrixLocation = gl.getUniformLocation(program, "u_projMatrix");
-
-    var color = [Math.random(), Math.random(), Math.random(), 1];
-    gl.uniform4fv(colorLocation, color);
-  
-    // Create a buffer to put positions in
-    var positionBuffer = gl.createBuffer();
-    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    // Turn on the attribute
-    gl.enableVertexAttribArray(positionLocation);
-
-    // Bind the position buffer.
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 3;          // 3 components per iteration
-    var type = gl.FLOAT;   // the data is 32bit floats
-    var normalize = false; // don't normalize the data
-    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-    var offset = 0;        // start at the beginning of the buffer
-    gl.vertexAttribPointer(
-        positionLocation, size, type, normalize, stride, offset);
+    var normalLocation = gl.getUniformLocation(program, "u_normal");
+    var shadingBool = gl.getUniformLocation(program, "u_shading");
 
     // Compute the matrices
     var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
@@ -109,30 +94,31 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     matrix = mat4.multiply(matrix, mat4.scale(scale[0]*zoom, scale[1]*zoom, scale[2]*zoom));
     matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
 
-    var target = [0, 0, 0];
-    var eye = [0, 0, 1];
+    var target = [0, 0, 1];
+    var center = [0, 0, 0];
     var up = [0, 1, 0];
 
     // Camera Rotation
-    var cameraMatrix = mat4.xRotate(camera[0]);
-    cameraMatrix = mat4.multiply(cameraMatrix, mat4.yRotate(camera[1]));
-    cameraMatrix = mat4.multiply(cameraMatrix, mat4.zRotate(camera[2]));
-    cameraMatrix = mat4.multiply(cameraMatrix, mat4.translate(...eye))
+    matrix = mat4.multiply(matrix, mat4.xRotate(camera[0]));
+    matrix = mat4.multiply(matrix, mat4.yRotate(camera[1]));
+    matrix = mat4.multiply(matrix, mat4.zRotate(camera[2]));
+    
+    // Compute the camera's matrix using look at.
+    var cameraMatrix = mat4.lookAt(target, center, up);
 
-    var cameraPosition = [
-        cameraMatrix[12],
-        cameraMatrix[13],
-        cameraMatrix[14],
-    ];
-
-    cameraMatrix = mat4.lookAt(cameraPosition, target, up);
     var viewMatrix = mat4.inverse(cameraMatrix);
 
-    projMatrix = mat4.multiply(projMatrix, viewMatrix);
+    var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
+
+    // Compute the normal matrix
+    var normalMatrix = mat4.inverse(modelViewMatrix);
+    normalMatrix = mat4.transpose(normalMatrix);
 
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
+    gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
+    gl.uniform1i(shadingBool, true);
 
     // Draw the geometry.
     drawGeometry(gl,program,model);
