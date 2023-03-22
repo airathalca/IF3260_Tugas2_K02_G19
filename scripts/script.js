@@ -99,9 +99,6 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     var up = [0, 1, 0];
 
     // Camera Rotation
-    matrix = mat4.multiply(matrix, mat4.xRotate(camera[0]));
-    matrix = mat4.multiply(matrix, mat4.yRotate(camera[1]));
-    matrix = mat4.multiply(matrix, mat4.zRotate(camera[2]));
     
     // Compute the camera's matrix using look at.
     var cameraMatrix = mat4.lookAt(target, center, up);
@@ -109,6 +106,9 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     var viewMatrix = mat4.inverse(cameraMatrix);
 
     var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
+    projMatrix = mat4.multiply(projMatrix, mat4.xRotate(camera[0]));
+    projMatrix = mat4.multiply(projMatrix, mat4.yRotate(camera[1]));
+    projMatrix = mat4.multiply(projMatrix, mat4.zRotate(camera[2]));
 
     // Compute the normal matrix
     var normalMatrix = mat4.inverse(modelViewMatrix);
