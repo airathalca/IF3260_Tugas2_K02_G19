@@ -62,7 +62,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, center) {
+export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, center, shading) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.CULL_FACE);
@@ -94,19 +94,19 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     matrix = mat4.multiply(matrix, mat4.scale(scale[0]*zoom, scale[1]*zoom, scale[2]*zoom));
     matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
 
-    var target = [0, 0, 1];
-    var center = [0, 0, 0];
+    var eye = [0, 0, 5];
+    var target = [0, 0, 0];
     var up = [0, 1, 0];
 
     // Camera Rotation
-    
-    // Compute the camera's matrix using look at.
-    var cameraMatrix = mat4.lookAt(target, center, up);
+    var cameraMatrix = mat4.lookAt(eye, target, up);
 
     var viewMatrix = mat4.inverse(cameraMatrix);
-    var viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(camera[0]));
-    var viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(camera[1]));
-    var viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(camera[2]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, 0));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(camera[0]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(camera[1]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(camera[2]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(-gl.canvas.clientWidth / 2, -gl.canvas.clientHeight / 2, 0));
 
     var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
 
@@ -122,7 +122,7 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
     gl.uniformMatrix4fv(matrixLocation, false, modelViewMatrix);
     gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
-    gl.uniform1i(shadingBool, true);
+    gl.uniform1i(shadingBool, shading);
 
     // Draw the geometry.
     drawGeometry(gl,program,model);

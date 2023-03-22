@@ -12,6 +12,7 @@ export var value = {
   value_cameraX: document.querySelector("#value-cameraX"),
   value_cameraY: document.querySelector("#value-cameraY"),
   value_cameraZ: document.querySelector("#value-cameraZ"),
+  value_shading: document.querySelector("#value-shading"),
 }
 
 export var slider = {
@@ -28,6 +29,10 @@ export var slider = {
   slider_cameraX: document.querySelector("#slider-cameraX"),
   slider_cameraY: document.querySelector("#slider-cameraY"),
   slider_cameraZ: document.querySelector("#slider-cameraZ"),
+}
+
+export var checkbox = {
+  check_shading: document.querySelector("#check-shading"),
 }
 
 export var button = {

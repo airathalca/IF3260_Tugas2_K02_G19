@@ -1,7 +1,7 @@
 import { drawScene, createProgram } from './script.js';
 import { model_F } from '../models/model_F.js';
 import { degToRad, radToDeg } from './helper.js';
-import { value, slider, button } from './querySelector.js';
+import { value, slider, checkbox, button } from './querySelector.js';
 import mat4 from './matrix.js';
 
 const main = () => {
@@ -16,11 +16,12 @@ const main = () => {
   // setup GLSL program
   var hollowObject = model_F;
   var program = createProgram(gl);
-  var translation = [0, 0, 0];
+  var translation = [250, 250, 0];
   var rotation = [degToRad(0), degToRad(0), degToRad(0)];
   var scale = [1, 1, 1];
   var zoom = 1.0;
   var cameraAngleRadians = [degToRad(0), degToRad(0), degToRad(0)];
+  var shading = false;
   var center = centerpoint();
 
   var defTranslation = [...translation];
@@ -31,6 +32,7 @@ const main = () => {
 
   //setup UI
   defaultSlider();
+  defaultCheckbox();
   slider.slider_transX.oninput = updatePosition(0);
   slider.slider_transY.oninput = updatePosition(1);
   slider.slider_transZ.oninput = updatePosition(2);
@@ -45,12 +47,14 @@ const main = () => {
   slider.slider_cameraY.oninput = updateCameraAngle(1);
   slider.slider_cameraZ.oninput = updateCameraAngle(2);
 
+  checkbox.check_shading.oninput = updateShading();
+
   button.button_reset.onclick = resetState();
   button.button_save.onclick = save();
 
   button.input_file.onchange = load();
 
-  var modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+  var modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
 
   function load() {
     return function(event) {
@@ -98,7 +102,7 @@ const main = () => {
         value.value_transY.innerHTML = translation[index];
       else
         value.value_transZ.innerHTML = translation[index];
-      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
     };
   }
 
@@ -113,7 +117,7 @@ const main = () => {
         value.value_angleY.innerHTML = angleInDegrees;
       else
         value.value_angleZ.innerHTML = angleInDegrees;
-      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
     };
   }
 
@@ -126,7 +130,7 @@ const main = () => {
         value.value_scaleY.innerHTML = scale[index];
       else
         value.value_scaleZ.innerHTML = scale[index];
-      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
     };
   }
 
@@ -134,7 +138,7 @@ const main = () => {
     return function(event) {
       zoom = event.target.value;
       value.value_zoom.innerHTML = zoom;
-      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
     };
   }
 
@@ -149,7 +153,14 @@ const main = () => {
         value.value_cameraY.innerHTML = angleInDegrees;
       else
         value.value_cameraZ.innerHTML = angleInDegrees;
-      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
+    };
+  }
+
+  function updateShading() {
+    return function(event) {
+      shading = event.target.checked;
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
     };
   }
 
@@ -185,6 +196,10 @@ const main = () => {
     slider.slider_cameraZ.value = radToDeg(cameraAngleRadians[2]);
   }
 
+  function defaultCheckbox() {
+    checkbox.check_shading.checked = false;
+  }
+
   function resetState() {
     return function(event) {
       reset();
@@ -198,7 +213,8 @@ const main = () => {
     zoom = defZoom;
     cameraAngleRadians = [...defCameraAngleRadians];
     defaultSlider();
-    modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+    defaultCheckbox();
+    modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center, shading);
   }
 
   function centerpoint() {
