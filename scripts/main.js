@@ -50,7 +50,7 @@ const main = () => {
 
   button.input_file.onchange = load();
 
-  drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+  var modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
 
   function load() {
     return function(event) {
@@ -70,16 +70,8 @@ const main = () => {
   function save() {
     return function(event) {
       var copyObj = JSON.parse(JSON.stringify(hollowObject));
-      var matrix = mat4.translate(translation[0], translation[1], translation[2]);
-      matrix = mat4.multiply(matrix, mat4.translate(center[0], center[1], center[2]));
-      matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
-      matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
-      matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
-      matrix = mat4.multiply(matrix, mat4.scale(scale[0], scale[1], scale[2]));
-      matrix = mat4.multiply(matrix, mat4.scale(zoom, zoom, zoom));
-      matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
       for (let i = 0; i < hollowObject.positions.length; i+=3) {
-        var res = mat4.multiplyVector(matrix, [hollowObject.positions[i], hollowObject.positions[i+1], hollowObject.positions[i+2], 1]);
+        var res = mat4.multiplyVector(modelViewMatrix, [hollowObject.positions[i], hollowObject.positions[i+1], hollowObject.positions[i+2], 1]);
         copyObj.positions[i] = res[0];
         copyObj.positions[i+1] = res[1];
         copyObj.positions[i+2] = res[2];
@@ -106,7 +98,7 @@ const main = () => {
         value.value_transY.innerHTML = translation[index];
       else
         value.value_transZ.innerHTML = translation[index];
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
     };
   }
 
@@ -121,7 +113,7 @@ const main = () => {
         value.value_angleY.innerHTML = angleInDegrees;
       else
         value.value_angleZ.innerHTML = angleInDegrees;
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
     };
   }
 
@@ -134,7 +126,7 @@ const main = () => {
         value.value_scaleY.innerHTML = scale[index];
       else
         value.value_scaleZ.innerHTML = scale[index];
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
     };
   }
 
@@ -142,7 +134,7 @@ const main = () => {
     return function(event) {
       zoom = event.target.value;
       value.value_zoom.innerHTML = zoom;
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
     };
   }
 
@@ -157,7 +149,7 @@ const main = () => {
         value.value_cameraY.innerHTML = angleInDegrees;
       else
         value.value_cameraZ.innerHTML = angleInDegrees;
-      drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+      modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
     };
   }
 
@@ -206,7 +198,7 @@ const main = () => {
     zoom = defZoom;
     cameraAngleRadians = [...defCameraAngleRadians];
     defaultSlider();
-    drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
+    modelViewMatrix = drawScene(gl,program, hollowObject, translation, rotation, scale, zoom, cameraAngleRadians, center);
   }
 
   function centerpoint() {

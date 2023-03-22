@@ -104,11 +104,11 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     var cameraMatrix = mat4.lookAt(target, center, up);
 
     var viewMatrix = mat4.inverse(cameraMatrix);
+    var viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(camera[0]));
+    var viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(camera[1]));
+    var viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(camera[2]));
 
     var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
-    projMatrix = mat4.multiply(projMatrix, mat4.xRotate(camera[0]));
-    projMatrix = mat4.multiply(projMatrix, mat4.yRotate(camera[1]));
-    projMatrix = mat4.multiply(projMatrix, mat4.zRotate(camera[2]));
 
     // Compute the normal matrix
     var normalMatrix = mat4.inverse(modelViewMatrix);
@@ -120,12 +120,14 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
 
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
-    gl.uniformMatrix4fv(matrixLocation, false, matrix);
+    gl.uniformMatrix4fv(matrixLocation, false, modelViewMatrix);
     gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
     gl.uniform1i(shadingBool, true);
 
     // Draw the geometry.
     drawGeometry(gl,program,model);
+
+    return modelViewMatrix;
 }
 
 export function createProgram(gl) {
