@@ -59,6 +59,25 @@
 	<div class="toolbar">
 		<div id="uiContainer">
       <div id="ui">
+        <div class="tools-label">PROJECTION TYPE</div>
+        <div class="tools">
+          <div class="outer">
+            <div id="value-shading"></div>
+            <input id="orthogonal" type="radio" name="perspective-option" value="orthogonal" checked>
+            <label for="orthogonal">Orthogonal</label>
+            <input id="perspective" type="radio" name="perspective-option" value="perspective">
+            <label for="perspective">Perspective</label>
+            <input id="oblique" type="radio" name="perspective-option" value="oblique">
+            <label for="oblique">Oblique</label>
+          </div>
+        </div>
+        <br>
+        <div class="outer">
+          <div class="label">Fudge Factor</div>
+          <div id="value-fudgeFactor"></div>
+          <input id="slider-fudgeFactor" type="range" min="0.1" max="2" step="0.05"/>
+        </div>
+        <hr>
         <div class="tools-label">TRANSLATE</div>
         <div class="tools">
           <div class="outer">

@@ -1,7 +1,7 @@
 import { drawScene, createProgram } from './script.js';
 import { model_F } from '../models/model_F.js';
 import { degToRad, radToDeg } from './helper.js';
-import { value, slider, checkbox, button } from './querySelector.js';
+import { value, slider, checkbox, button, radio } from './querySelector.js';
 import mat4 from './matrix.js';
 
 const main = () => {
@@ -26,6 +26,9 @@ const main = () => {
     cameraRadius: 1.0,
     shading: false,
     center: centerpoint(defaultHollow),
+    fudgeFactor: 1,
+    projType: "orthogonal",
+
   }
 
   var defParams = {
@@ -35,6 +38,8 @@ const main = () => {
     zoom: 1.0,
     cameraAngleRadians: [...params.cameraAngleRadians],
     cameraRadius: 1.0,
+    fudgeFactor: 1,
+    projType: "orthogonal",
   }
 
   //setup UI
@@ -54,6 +59,7 @@ const main = () => {
   slider.slider_cameraY.oninput = updateCameraAngle(1);
   slider.slider_cameraZ.oninput = updateCameraAngle(2);
   slider.slider_cameraR.oninput = updateCameraRadius();
+  slider.slider_fudgeFactor.oninput = updateFudgeFactor();
 
   checkbox.check_shading.oninput = updateShading();
 
@@ -61,6 +67,10 @@ const main = () => {
   button.button_save.onclick = save();
 
   button.input_file.onchange = load();
+
+  radio.orthogonalRadio.onclick = updateProjection();
+  radio.perspectiveRadio.onclick = updateProjection();
+  radio.obliqueRadio.onclick = updateProjection();
 
   var modelViewMatrix = drawScene(gl, params);
 
@@ -145,11 +155,25 @@ const main = () => {
       modelViewMatrix = drawScene(gl, params);
     };
   }
+  function updateFudgeFactor() {
+    return function(event) {
+      params.fudgeFactor = event.target.value;
+      value.value_fudgeFactor.innerHTML = params.fudgeFactor;
+      modelViewMatrix = drawScene(gl, params);
+    };
+  }
 
   function updateZoom() {
     return function(event) {
       params.zoom = event.target.value;
       value.value_zoom.innerHTML = params.zoom;
+      modelViewMatrix = drawScene(gl, params);
+    };
+  }
+
+  function updateProjection() {
+    return function(event) {
+      params.projType = event.target.value;
       modelViewMatrix = drawScene(gl, params);
     };
   }
@@ -200,6 +224,7 @@ const main = () => {
     value.value_cameraY.innerHTML = radToDeg(defParams.cameraAngleRadians[1]);
     value.value_cameraZ.innerHTML = radToDeg(defParams.cameraAngleRadians[2]);
     value.value_cameraR.innerHTML = defParams.cameraRadius;
+    value.value_fudgeFactor.innerHTML = defParams.fudgeFactor;
 
     // set default value slider
     slider.slider_transX.value = defParams.translation[0];

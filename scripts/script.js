@@ -86,6 +86,17 @@ export function drawScene(gl, params) {
 
     // Compute the matrices
     var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
+    if (params.projType == "perspective") {
+        gl.uniform1f(fudgeLocation, params.fudgeFactor);
+    }
+    else{
+        gl.uniform1f(fudgeLocation, 0);
+    }
+
+    if (params.projType == "oblique"){
+        projMatrix = mat4.multiply(projMatrix, mat4.oblique());
+    }
+    
     var matrix = mat4.translate(params.translation[0], params.translation[1], params.translation[2]);
     matrix = mat4.multiply(matrix, mat4.translate(params.center[0], params.center[1], params.center[2]));
     matrix = mat4.multiply(matrix, mat4.xRotate(params.rotation[0]));
