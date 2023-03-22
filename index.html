@@ -12,6 +12,7 @@
       uniform mat4 u_modelMatrix;
       uniform mat4 u_projMatrix;
       uniform mat4 u_viewMatrix;
+      uniform float u_fudgeFactor;
       
       varying highp vec3 v_lighting;
       varying lowp vec4 v_color;
@@ -19,6 +20,12 @@
       void main() {
         // Multiply the position by the matrix.
         gl_Position = u_projMatrix * u_viewMatrix * u_modelMatrix * a_position;
+
+        // Adjust the z to divide by
+        float zToDivideBy = 1.0 + gl_Position.z * u_fudgeFactor;
+      
+        // Divide x and y by z.
+        gl_Position = vec4(gl_Position.xy / zToDivideBy, gl_Position.zw);
         
         // Pass the color to the fragment shader.
         v_color = a_color;
@@ -60,6 +67,25 @@
 	<div class="toolbar">
 		<div id="uiContainer">
       <div id="ui">
+        <div class="tools-label">PROJECTION TYPE</div>
+        <div class="tools">
+          <div class="outer">
+            <div id="value-shading"></div>
+            <input id="orthogonal" type="radio" name="perspective-option" value="orthogonal" checked>
+            <label for="orthogonal">Orthogonal</label>
+            <input id="perspective" type="radio" name="perspective-option" value="perspective">
+            <label for="perspective">Perspective</label>
+            <input id="oblique" type="radio" name="perspective-option" value="oblique">
+            <label for="oblique">Oblique</label>
+          </div>
+        </div>
+        <br>
+        <div class="outer">
+          <div class="label">Fudge Factor</div>
+          <div id="value-fudgeFactor"></div>
+          <input id="slider-fudgeFactor" type="range" min="0.1" max="2" step="0.05"/>
+        </div>
+        <hr>
         <div class="tools-label">TRANSLATE</div>
         <div class="tools">
           <div class="outer">

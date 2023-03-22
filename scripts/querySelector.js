@@ -14,6 +14,7 @@ export var value = {
   value_cameraZ: document.querySelector("#value-cameraZ"),
   value_cameraR: document.querySelector("#value-cameraR"),
   value_shading: document.querySelector("#value-shading"),
+  value_fudgeFactor: document.querySelector("#value-fudgeFactor"),
 }
 
 export var slider = {
@@ -31,6 +32,7 @@ export var slider = {
   slider_cameraY: document.querySelector("#slider-cameraY"),
   slider_cameraZ: document.querySelector("#slider-cameraZ"),
   slider_cameraR: document.querySelector("#slider-cameraR"),
+  slider_fudgeFactor: document.querySelector("#slider-fudgeFactor"),
 }
 
 export var checkbox = {
@@ -41,4 +43,10 @@ export var button = {
   button_reset: document.querySelector("#reset"),
   input_file: document.querySelector("#file"),
   button_save: document.querySelector("#save"),
+}
+
+export var radio = {
+  orthogonalRadio : document.getElementById("orthogonal"),
+  perspectiveRadio : document.getElementById("perspective"),
+  obliqueRadio : document.getElementById("oblique"),
 }
