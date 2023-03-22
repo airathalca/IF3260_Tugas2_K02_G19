@@ -114,6 +114,10 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     var normalMatrix = mat4.inverse(modelViewMatrix);
     normalMatrix = mat4.transpose(normalMatrix);
 
+    normalMatrix = mat4.multiply(normalMatrix, mat4.xRotate(camera[0]));
+    normalMatrix = mat4.multiply(normalMatrix, mat4.yRotate(camera[1]));
+    normalMatrix = mat4.multiply(normalMatrix, mat4.zRotate(camera[2]));
+
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
