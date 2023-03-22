@@ -62,7 +62,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, cameraRadius, center, shading) {
+export function drawScene(gl, params) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.CULL_FACE);
@@ -76,25 +76,25 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Tell it to use our program (pair of shaders)
-    gl.useProgram(program);
+    gl.useProgram(params.program);
   
     // lookup uniforms
-    var matrixLocation = gl.getUniformLocation(program, "u_matrix");
-    var projMatrixLocation = gl.getUniformLocation(program, "u_projMatrix");
-    var normalLocation = gl.getUniformLocation(program, "u_normal");
-    var shadingBool = gl.getUniformLocation(program, "u_shading");
+    var matrixLocation = gl.getUniformLocation(params.program, "u_matrix");
+    var projMatrixLocation = gl.getUniformLocation(params.program, "u_projMatrix");
+    var normalLocation = gl.getUniformLocation(params.program, "u_normal");
+    var shadingBool = gl.getUniformLocation(params.program, "u_shading");
 
     // Compute the matrices
     var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
-    var matrix = mat4.translate(translation[0], translation[1], translation[2]);
-    matrix = mat4.multiply(matrix, mat4.translate(center[0], center[1], center[2]));
-    matrix = mat4.multiply(matrix, mat4.xRotate(rotation[0]));
-    matrix = mat4.multiply(matrix, mat4.yRotate(rotation[1]));
-    matrix = mat4.multiply(matrix, mat4.zRotate(rotation[2]));
-    matrix = mat4.multiply(matrix, mat4.scale(scale[0]*zoom, scale[1]*zoom, scale[2]*zoom));
-    matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
+    var matrix = mat4.translate(params.translation[0], params.translation[1], params.translation[2]);
+    matrix = mat4.multiply(matrix, mat4.translate(params.center[0], params.center[1], params.center[2]));
+    matrix = mat4.multiply(matrix, mat4.xRotate(params.rotation[0]));
+    matrix = mat4.multiply(matrix, mat4.yRotate(params.rotation[1]));
+    matrix = mat4.multiply(matrix, mat4.zRotate(params.rotation[2]));
+    matrix = mat4.multiply(matrix, mat4.scale(params.scale[0]*params.zoom, params.scale[1]*params.zoom, params.scale[2]*params.zoom));
+    matrix = mat4.multiply(matrix, mat4.translate(-params.center[0], -params.center[1], -params.center[2]));
 
-    var eye = [0, 0, cameraRadius];
+    var eye = [0, 0, params.cameraRadius];
     var target = [0, 0, 0];
     var up = [0, 1, 0];
 
@@ -103,9 +103,9 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
 
     var viewMatrix = mat4.inverse(cameraMatrix);
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, 0));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(camera[0]));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(camera[1]));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(camera[2]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(params.cameraAngleRadians[0]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(params.cameraAngleRadians[1]));
+    viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(-gl.canvas.clientWidth / 2, -gl.canvas.clientHeight / 2, 0));
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(...eye));
 
@@ -115,18 +115,18 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     var normalMatrix = mat4.inverse(modelViewMatrix);
     normalMatrix = mat4.transpose(normalMatrix);
 
-    normalMatrix = mat4.multiply(normalMatrix, mat4.xRotate(camera[0]));
-    normalMatrix = mat4.multiply(normalMatrix, mat4.yRotate(camera[1]));
-    normalMatrix = mat4.multiply(normalMatrix, mat4.zRotate(camera[2]));
+    normalMatrix = mat4.multiply(normalMatrix, mat4.xRotate(params.cameraAngleRadians[0]));
+    normalMatrix = mat4.multiply(normalMatrix, mat4.yRotate(params.cameraAngleRadians[1]));
+    normalMatrix = mat4.multiply(normalMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
 
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
     gl.uniformMatrix4fv(matrixLocation, false, modelViewMatrix);
     gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
-    gl.uniform1i(shadingBool, shading);
+    gl.uniform1i(shadingBool, params.shading);
 
     // Draw the geometry.
-    drawGeometry(gl,program,model);
+    drawGeometry(gl, params.program, params.hollowObject);
 
     return modelViewMatrix;
 }
