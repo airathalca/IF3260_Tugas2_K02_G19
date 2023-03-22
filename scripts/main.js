@@ -16,7 +16,7 @@ const main = () => {
   // setup GLSL program
   var hollowObject = model_F;
   var program = createProgram(gl);
-  var translation = [0, 0, 0];
+  var translation = [250, 250, 0];
   var rotation = [degToRad(0), degToRad(0), degToRad(0)];
   var scale = [1, 1, 1];
   var zoom = 1.0;

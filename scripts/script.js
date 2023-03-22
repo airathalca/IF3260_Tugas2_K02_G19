@@ -94,29 +94,31 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     matrix = mat4.multiply(matrix, mat4.scale(scale[0]*zoom, scale[1]*zoom, scale[2]*zoom));
     matrix = mat4.multiply(matrix, mat4.translate(-center[0], -center[1], -center[2]));
 
-    var target = [0, 0, 1];
-    var center = [0, 0, 0];
+    var eye = [0, 0, 5];
+    var target = [0, 0, 0];
     var up = [0, 1, 0];
 
     // Camera Rotation
-    
-    // Compute the camera's matrix using look at.
-    var cameraMatrix = mat4.lookAt(target, center, up);
+    var cameraMatrix = mat4.lookAt(eye, target, up);
 
     var viewMatrix = mat4.inverse(cameraMatrix);
 
     var modelViewMatrix = mat4.multiply(viewMatrix, matrix);
+    projMatrix = mat4.multiply(projMatrix, mat4.translate(gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, 0));
     projMatrix = mat4.multiply(projMatrix, mat4.xRotate(camera[0]));
     projMatrix = mat4.multiply(projMatrix, mat4.yRotate(camera[1]));
     projMatrix = mat4.multiply(projMatrix, mat4.zRotate(camera[2]));
+    projMatrix = mat4.multiply(projMatrix, mat4.translate(-gl.canvas.clientWidth / 2, -gl.canvas.clientHeight / 2, 0));
 
     // Compute the normal matrix
     var normalMatrix = mat4.inverse(modelViewMatrix);
     normalMatrix = mat4.transpose(normalMatrix);
 
+    projMatrix = mat4.multiply(projMatrix, mat4.translate(gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, 0));
     normalMatrix = mat4.multiply(normalMatrix, mat4.xRotate(camera[0]));
     normalMatrix = mat4.multiply(normalMatrix, mat4.yRotate(camera[1]));
     normalMatrix = mat4.multiply(normalMatrix, mat4.zRotate(camera[2]));
+    projMatrix = mat4.multiply(projMatrix, mat4.translate(-gl.canvas.clientWidth / 2, -gl.canvas.clientHeight / 2, 0));
 
     // Set the matrix.
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);

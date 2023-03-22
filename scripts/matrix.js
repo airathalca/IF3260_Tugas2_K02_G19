@@ -20,9 +20,9 @@ var mat4 = {
     return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
   },
 
-  lookAt: function(cameraPosition, target, up) {
+  lookAt: function(eye, target, up) {
     var zAxis = mat4.normalize(
-        mat4.subtractVectors(cameraPosition, target));
+        mat4.subtractVectors(eye, target));
     var xAxis = mat4.normalize(mat4.cross(up, zAxis));
     var yAxis = mat4.normalize(mat4.cross(zAxis, xAxis));
 
@@ -30,10 +30,7 @@ var mat4 = {
        xAxis[0], xAxis[1], xAxis[2], 0,
        yAxis[0], yAxis[1], yAxis[2], 0,
        zAxis[0], zAxis[1], zAxis[2], 0,
-       cameraPosition[0],
-       cameraPosition[1],
-       cameraPosition[2],
-       1,
+       eye[0], eye[1], eye[2], 1,
     ];
   },
 
