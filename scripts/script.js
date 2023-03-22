@@ -62,7 +62,7 @@ function resizeCanvasToDisplaySize(canvas)  {
 }
 
 
-export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, center) {
+export function drawScene(gl,program, model, translation, rotation, scale, zoom, camera, center, shading) {
     resizeCanvasToDisplaySize(gl.canvas);
     gl.clearDepth(1.0);            // Clear everything
     gl.enable(gl.CULL_FACE);
@@ -124,7 +124,7 @@ export function drawScene(gl,program, model, translation, rotation, scale, zoom,
     gl.uniformMatrix4fv(projMatrixLocation, false, projMatrix);
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
     gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
-    gl.uniform1i(shadingBool, true);
+    gl.uniform1i(shadingBool, shading);
 
     // Draw the geometry.
     drawGeometry(gl,program,model);
