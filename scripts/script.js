@@ -5,17 +5,7 @@ function drawGeometry(gl,program,model){
     // Set up positions buffer
     const positionsBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionsBuffer);
-    var obj = [];
-    var matrix = mat4.xRotate(Math.PI);
-    matrix = mat4.multiply(matrix, mat4.translate(-50, -75, -15));
-
-    for (var ii = 0; ii < model.positions.length; ii += 3) {
-      var vector = mat4.multiplyVector(matrix, [model.positions[ii + 0], model.positions[ii + 1], model.positions[ii + 2], 1]);
-      obj.push(vector[0]);
-      obj.push(vector[1]);
-      obj.push(vector[2]);
-    }
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.positions), gl.STATIC_DRAW);
 
     // Set up colors buffer
     const colorsBuffer = gl.createBuffer();
@@ -96,7 +86,7 @@ export function drawScene(gl, params) {
     var fudgeLocation = gl.getUniformLocation(params.program, "u_fudgeFactor");
 
     // Compute projection matrix
-    var projMatrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1600);
+    var projMatrix = mat4.ortho(-gl.canvas.clientWidth / 2, gl.canvas.clientWidth / 2, gl.canvas.clientHeight / 2, - gl.canvas.clientHeight / 2, 800, -800);
 
     // compute model matrix
     if (params.projType == "perspective") {
@@ -107,7 +97,7 @@ export function drawScene(gl, params) {
     }
 
     if (params.projType == "oblique"){
-        projMatrix = mat4.multiply(projMatrix, mat4.oblique(degToRad(60), degToRad(105)));
+        projMatrix = mat4.multiply(projMatrix, mat4.oblique(degToRad(75), degToRad(75)));
     }
     
     var modelMatrix = mat4.translate(params.translation[0], params.translation[1], params.translation[2]);
@@ -123,12 +113,10 @@ export function drawScene(gl, params) {
     // var target = [0, 0, 0];
     // var up = [0, 1, 0];
     var viewMatrix = mat4.identity();
-    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(gl.canvas.clientWidth/2, gl.canvas.clientHeight/2, 0));
     viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(params.cameraAngleRadians[0]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(params.cameraAngleRadians[1]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(...eye));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.translate(-gl.canvas.clientWidth/2, -gl.canvas.clientHeight/2, 0));
     viewMatrix = mat4.inverse(viewMatrix);
 
     var modelViewMatrix = mat4.multiply(viewMatrix, modelMatrix);

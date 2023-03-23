@@ -56,15 +56,14 @@ var mat4 = {
   },
 
   oblique: function(theta, phi){     
-    var cotT = -1/Math.tan(theta);
-    var cotP = -1/Math.tan(phi);
-    
+    var cotTheta = 1 / Math.tan(theta);
+    var cotPhi = 1 / Math.tan(phi);
     return [
       1, 0, 0, 0,
       0, 1, 0, 0,
-      cotT, cotP, 1, 0,
+      cotTheta, cotPhi, 1, 0,
       0, 0, 0, 1,
-    ]  
+    ];
   },
 
   perspective: function(fieldOfViewInRadians, aspect, near, far) {
