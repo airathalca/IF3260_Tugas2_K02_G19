@@ -107,7 +107,7 @@ export function drawScene(gl, params) {
     }
 
     if (params.projType == "oblique"){
-        projMatrix = mat4.multiply(projMatrix, mat4.oblique());
+        projMatrix = mat4.multiply(projMatrix, mat4.oblique(degToRad(60), degToRad(105)));
     }
     
     var modelMatrix = mat4.translate(params.translation[0], params.translation[1], params.translation[2]);
