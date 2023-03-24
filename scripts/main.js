@@ -19,7 +19,7 @@ const main = () => {
     hollowObject: defaultHollow,
     program: prog,
     translation: [0, 0, 0],
-    rotation: [degToRad(0), degToRad(0), degToRad(0)],
+    rotation: [degToRad(90), degToRad(0), degToRad(360)],
     scale: [1, 1, 1],
     zoom: 1.0,
     cameraAngleRadians: [degToRad(0), degToRad(0), degToRad(0)],

@@ -32,7 +32,7 @@ function drawGeometry(gl,program,model){
     gl.enableVertexAttribArray(normalAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, normalsBuffer);
     gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-    // gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
+    gl.drawArrays(gl.TRIANGLES, 0, model.positions.length / 3);
 }
 
 function createShader(gl, type, source) {
@@ -132,25 +132,25 @@ export function drawScene(gl, params) {
     // Set the matrix.
     gl.uniformMatrix4fv(projLocation, false, projMatrix);
     gl.uniformMatrix4fv(viewLocation, false, viewMatrix);
-    // gl.uniformMatrix4fv(modelLocation, false, modelMatrix);
+    gl.uniformMatrix4fv(modelLocation, false, modelMatrix);
     gl.uniformMatrix4fv(normalLocation, false, normalMatrix);
     gl.uniform1i(shadingBool, params.shading);
-
+    console.log(params.hollowObject);
     // Draw the geometry.
     drawGeometry(gl, params.program, params.hollowObject);
 
     // create 5 model
-    for (let i = 0; i < 5; i++) {
-      var angle = i * Math.PI * 2 / 5;
-      var x = Math.cos(angle) * 100;
-      var y = Math.sin(angle) * 100;
-      var matrix = mat4.multiply(modelMatrix, mat4.translate(x, 0, y));
-      matrix = mat4.multiply(matrix, mat4.scale(0.5, 0.5, 0.5));
-      gl.uniformMatrix4fv(modelLocation, false, matrix);
+    // for (let i = 0; i < 5; i++) {
+    //   var angle = i * Math.PI * 2 / 5;
+    //   var x = Math.cos(angle) * 100;
+    //   var y = Math.sin(angle) * 100;
+    //   var matrix = mat4.multiply(modelMatrix, mat4.translate(x, 0, y));
+    //   matrix = mat4.multiply(matrix, mat4.scale(0.5, 0.5, 0.5));
+    //   gl.uniformMatrix4fv(modelLocation, false, matrix);
 
-      gl.drawArrays(gl.TRIANGLES, 0, params.hollowObject.positions.length/3);
-    }
-    return modelViewMatrix;
+    //   gl.drawArrays(gl.TRIANGLES, 0, params.hollowObject.positions.length/3);
+    // }
+    return modelMatrix;
 }
 
 export function createProgram(gl) {
