@@ -2,7 +2,6 @@ var mat4 = {
 
   normalize: function(v) {
     var length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-    // make sure we don't divide by 0.
     if (length > 0.00001) {
       return [v[0] / length, v[1] / length, v[2] / length];
     } else {
@@ -178,7 +177,6 @@ var mat4 = {
 
   getMinor: function(m, r, cosine) {
     var cofactor = mat4.getCofactor(m, r, cosine);
-    //calculate determinant 3x3
     var result = 0;
     result += cofactor[0] * cofactor[4] * cofactor[8] + 
     cofactor[1] * cofactor[5] * cofactor[6] +

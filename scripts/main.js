@@ -5,7 +5,6 @@ import { value, slider, checkbox, button, radio } from './querySelector.js';
 import mat4 from './matrix.js';
 
 const main = () => {
-  // Get A WebGL context
   /** @type {HTMLCanvasElement} */
   var canvas = document.querySelector("#myCanvas");
   var gl = canvas.getContext("webgl");
@@ -14,12 +13,12 @@ const main = () => {
   }
   var prog = createProgram(gl);
   var defaultHollow = model_F;
-  // setup GLSL program
+
   var params = {
     hollowObject: defaultHollow,
     program: prog,
     translation: [0, 0, 0],
-    rotation: [degToRad(90), degToRad(0), degToRad(360)],
+    rotation: [degToRad(0), degToRad(0), degToRad(0)],
     scale: [1, 1, 1],
     zoom: 1.0,
     cameraAngleRadians: [degToRad(0), degToRad(0), degToRad(0)],
@@ -42,7 +41,7 @@ const main = () => {
     projType: "orthogonal",
   }
 
-  //setup UI
+  // setup UI
   defaultSlider();
   defaultCheckbox();
   slider.slider_transX.oninput = updatePosition(0);
@@ -65,7 +64,6 @@ const main = () => {
 
   button.button_reset.onclick = resetState();
   button.button_save.onclick = save();
-
   button.input_file.onchange = load();
 
   radio.orthogonalRadio.onclick = updateProjection();
@@ -155,6 +153,7 @@ const main = () => {
       modelViewMatrix = drawScene(gl, params);
     };
   }
+
   function updateFudgeFactor() {
     return function(event) {
       params.fudgeFactor = event.target.value;
@@ -281,5 +280,4 @@ const main = () => {
   }
 }
 
-  
 window.onload = main
