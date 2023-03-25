@@ -43,6 +43,7 @@ export var button = {
   button_reset: document.querySelector("#reset"),
   input_file: document.querySelector("#file"),
   button_save: document.querySelector("#save"),
+  button_help: document.querySelector("#help"),
 }
 
 export var radio = {
@@ -50,3 +51,4 @@ export var radio = {
   perspectiveRadio : document.getElementById("perspective"),
   obliqueRadio : document.getElementById("oblique"),
 }
+

@@ -61,6 +61,15 @@
     <script type="module" src="scripts/main.js"></script>
   </head>
 <body>
+    <!-- Modal -->
+    <div id="myModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close" id="closeSpan">&times;</span>
+        <p>Put your help text or instructions here...</p>
+      </div>
+    </div>
+    <!-- Modal -->
+
   <div class="canvas">
     <canvas id="myCanvas"></canvas>
   </div>
@@ -83,7 +92,7 @@
         <div class="outer">
           <div class="label">Fudge Factor</div>
           <div id="value-fudgeFactor"></div>
-          <input id="slider-fudgeFactor" type="range" min="0.1" max="2" step="0.05"/>
+          <input id="slider-fudgeFactor" type="range" min="0.1" max="5" step="0.05" value ="1"/>
         </div>
         <hr>
         <div class="tools-label">TRANSLATE</div>
@@ -189,6 +198,7 @@
         <div>
           <button id="save">Save</button>
           <button id="reset">Reset</button>
+          <button id="help">Help</button>
         </div>
       </div>
     </div>

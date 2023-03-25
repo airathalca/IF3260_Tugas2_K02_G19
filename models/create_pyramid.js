@@ -1,3 +1,5 @@
+//SCRIPT INI DIGUNAKAN OLEH 13520094 UNTUK MEMBUAT MODELNYA
+
 const positions = [];
 const colors = [];
 const normals = [];

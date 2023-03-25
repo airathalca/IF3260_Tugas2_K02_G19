@@ -1,3 +1,5 @@
+// INI MODEL UNTUK COBA2 SAJA
+
 export const model_F ={
     positions: [
           // left column front

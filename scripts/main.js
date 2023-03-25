@@ -1,7 +1,8 @@
 import { drawScene, createProgram } from './script.js';
-import { model_F } from '../models/model_F.js';
+import { model_cube } from '../models/model_cube.js';
 import { degToRad, radToDeg } from './helper.js';
 import { value, slider, checkbox, button, radio } from './querySelector.js';
+import { modal, openModal, closeModal } from './help.js';
 import mat4 from './matrix.js';
 
 const main = () => {
@@ -12,7 +13,14 @@ const main = () => {
     return;
   }
   var prog = createProgram(gl);
-  var defaultHollow = model_F;
+  var defaultHollow= model_cube
+
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    closeModal();
+  }
+}
 
   var params = {
     hollowObject: defaultHollow,
@@ -65,6 +73,7 @@ const main = () => {
   button.button_reset.onclick = resetState();
   button.button_save.onclick = save();
   button.input_file.onchange = load();
+  button.button_help.onclick = openModal;
 
   radio.orthogonalRadio.onclick = updateProjection();
   radio.perspectiveRadio.onclick = updateProjection();
@@ -78,7 +87,7 @@ const main = () => {
       var reader = new FileReader();
       reader.onload = function(event) {
         var contents = event.target.result;
-        var data = JSON.parse(contents);;
+        var data = JSON.parse(contents);
         params.hollowObject = data;
         params.center = centerpoint(params.hollowObject);
         reset();
