@@ -258,7 +258,7 @@ window.onclick = function(event) {
     return function(event) {
       params.hollowObject.positions = []
       params.hollowObject.colors = []
-      params.hollowObject.indices = []
+      params.hollowObject.normals = []
       drawScene(gl, params);
     };
   }
