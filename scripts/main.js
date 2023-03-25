@@ -34,7 +34,7 @@ window.onclick = function(event) {
     shading: false,
     center: centerpoint(defaultHollow),
     fudgeFactor: 1,
-    projType: "orthogonal",
+    projType: "perspective",
 
   }
 
@@ -46,7 +46,7 @@ window.onclick = function(event) {
     cameraAngleRadians: [...params.cameraAngleRadians],
     cameraRadius: 200.0,
     fudgeFactor: 1,
-    projType: "orthogonal",
+    projType: "perspective",
   }
 
   // setup UI
