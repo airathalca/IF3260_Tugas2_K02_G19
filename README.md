@@ -37,7 +37,7 @@ Website ini menyediakan kanvas digital pada browser sedemikian sehingga pada kan
 2. Klik kanan, lalu klik `Open with Live Server`
 3. Website siap digunakan
 #### Cara 2
-Buka tautan berikut https://airathalca.github.io/IF3260-Tubes-2-Grafkom/
+Buka tautan berikut https://airathalca.github.io/IF3260_Tugas2_K02_G19/
 
 ## Contributors
 ### Kelas 02 - Kelompok 19
