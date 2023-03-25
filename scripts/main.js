@@ -47,6 +47,7 @@ window.onclick = function(event) {
     cameraRadius: 200.0,
     fudgeFactor: 1,
     projType: "perspective",
+    shading: false,
   }
 
   // setup UI
@@ -262,12 +263,16 @@ window.onclick = function(event) {
   }
 
   function reset() {
-    params.translation = defParams.translation;
-    params.rotation = defParams.rotation;
-    params.scale = defParams.scale;
+    params.translation = [...defParams.translation];
+    params.rotation = [...defParams.rotation];
+    params.scale = [...defParams.scale];
     params.zoom = defParams.zoom;
-    params.cameraAngleRadians = defParams.cameraAngleRadians;
+    params.cameraAngleRadians = [...defParams.cameraAngleRadians];
     params.cameraRadius = defParams.cameraRadius;
+    params.fudgeFactor = defParams.fudgeFactor;
+    params.projType = defParams.projType;
+    params.shading = defParams.shading;
+    radio.perspectiveRadio.checked = true;
     defaultSlider();
     defaultCheckbox();
     modelViewMatrix = drawScene(gl, params);
