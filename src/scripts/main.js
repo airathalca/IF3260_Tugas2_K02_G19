@@ -91,9 +91,15 @@ window.onclick = function(event) {
         if (params.hollowObject.positions.length === 0) {
           params.hollowObject = data;
         } else {
-          params.hollowObject.positions = params.hollowObject.positions.concat(data.positions);
-          params.hollowObject.colors = params.hollowObject.colors.concat(data.colors);
-          params.hollowObject.normals = params.hollowObject.normals.concat(data.normals);
+          if (params.hollowObject.positions.length % 9 !== 0) {
+            params.hollowObject.positions = data.positions.concat(params.hollowObject.positions);
+            params.hollowObject.colors = data.colors.concat(params.hollowObject.colors);
+            params.hollowObject.normals = data.normals.concat(params.hollowObject.normals);
+          } else {
+            params.hollowObject.positions = params.hollowObject.positions.concat(data.positions);
+            params.hollowObject.colors = params.hollowObject.colors.concat(data.colors);
+            params.hollowObject.normals = params.hollowObject.normals.concat(data.normals);
+          }
         }
         params.center = centerpoint(params.hollowObject);
         reset();
