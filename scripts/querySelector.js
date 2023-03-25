@@ -28,9 +28,7 @@ export var slider = {
   slider_scaleY: document.querySelector("#slider-scaleY"),
   slider_scaleZ: document.querySelector("#slider-scaleZ"),
   slider_zoom: document.querySelector("#slider-zoom"),
-  slider_cameraX: document.querySelector("#slider-cameraX"),
   slider_cameraY: document.querySelector("#slider-cameraY"),
-  slider_cameraZ: document.querySelector("#slider-cameraZ"),
   slider_cameraR: document.querySelector("#slider-cameraR"),
   slider_fudgeFactor: document.querySelector("#slider-fudgeFactor"),
 }

@@ -97,13 +97,19 @@ export function drawScene(gl, params) {
     var eye = [0, 0, params.cameraRadius];
     var target = [0, 0, 0];
     var up = [0, 1, 0];
-
-    var cameraMatrix = mat4.lookAt(eye, target, up);
-    var viewMatrix = mat4.inverse(cameraMatrix);
-    viewMatrix = mat4.multiply(viewMatrix, mat4.xRotate(params.cameraAngleRadians[0]));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(params.cameraAngleRadians[1]));
-    viewMatrix = mat4.multiply(viewMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
+    
+    var viewMatrix = mat4.identity();
+    viewMatrix = mat4.multiply(viewMatrix, mat4.yRotate(params.cameraAngleRadians));
     viewMatrix = mat4.multiply(viewMatrix, mat4.translate(...eye));
+
+    var camPos = [
+        viewMatrix[12],
+        viewMatrix[13],
+        viewMatrix[14]
+    ]
+
+    var cameraMatrix = mat4.lookAt(camPos, target, up);
+    viewMatrix = mat4.inverse(cameraMatrix);
 
     var modelViewMatrix = mat4.multiply(viewMatrix, modelMatrix);
 
