@@ -44,6 +44,7 @@ export var button = {
   input_file: document.querySelector("#file"),
   button_save: document.querySelector("#save"),
   button_help: document.querySelector("#help"),
+  button_clear: document.querySelector("#clear"),
 }
 
 export var radio = {

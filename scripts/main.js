@@ -75,6 +75,7 @@ window.onclick = function(event) {
   button.button_save.onclick = save();
   button.input_file.onchange = load();
   button.button_help.onclick = openModal;
+  button.button_clear.onclick = clearCanvas();
 
   radio.orthogonalRadio.onclick = updateProjection();
   radio.perspectiveRadio.onclick = updateProjection();
@@ -89,7 +90,9 @@ window.onclick = function(event) {
       reader.onload = function(event) {
         var contents = event.target.result;
         var data = JSON.parse(contents);
-        params.hollowObject = data;
+        params.hollowObject.positions.push(...data.positions);
+        params.hollowObject.colors.push(...data.colors);
+        params.hollowObject.normals.push(...data.normals);
         params.center = centerpoint(params.hollowObject);
         reset();
       };
@@ -259,6 +262,15 @@ window.onclick = function(event) {
   function resetState() {
     return function(event) {
       reset();
+    };
+  }
+
+  function clearCanvas() {
+    return function(event) {
+      params.hollowObject.positions = []
+      params.hollowObject.colors = []
+      params.hollowObject.indices = []
+      drawScene(gl, params);
     };
   }
 
