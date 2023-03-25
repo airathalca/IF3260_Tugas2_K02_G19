@@ -29,7 +29,7 @@ window.onclick = function(event) {
     rotation: [degToRad(0), degToRad(0), degToRad(0)],
     scale: [1, 1, 1],
     zoom: 1.0,
-    cameraAngleRadians: [degToRad(0), degToRad(0), degToRad(0)],
+    cameraAngleRadians: degToRad(0),
     cameraRadius: 200.0,
     shading: false,
     center: centerpoint(defaultHollow),
@@ -43,7 +43,7 @@ window.onclick = function(event) {
     rotation: [degToRad(0), degToRad(0), degToRad(0)],
     scale: [1, 1, 1],
     zoom: 1.0,
-    cameraAngleRadians: [degToRad(0), degToRad(0), degToRad(0)],
+    cameraAngleRadians: degToRad(0),
     cameraRadius: 200.0,
     fudgeFactor: 1,
     projType: "perspective",
@@ -63,9 +63,7 @@ window.onclick = function(event) {
   slider.slider_scaleY.oninput = updateScale(1);
   slider.slider_scaleZ.oninput = updateScale(2);
   slider.slider_zoom.oninput = updateZoom();
-  slider.slider_cameraX.oninput = updateCameraAngle(0);
-  slider.slider_cameraY.oninput = updateCameraAngle(1);
-  slider.slider_cameraZ.oninput = updateCameraAngle(2);
+  slider.slider_camera.oninput = updateCameraAngle();
   slider.slider_cameraR.oninput = updateCameraRadius();
   slider.slider_fudgeFactor.oninput = updateFudgeFactor();
 
@@ -190,17 +188,12 @@ window.onclick = function(event) {
     };
   }
 
-  function updateCameraAngle(index) {
+  function updateCameraAngle() {
     return function(event) {
       var angleInDegrees = event.target.value;
       var angleInRadians = angleInDegrees * Math.PI / 180;
-      params.cameraAngleRadians[index] = angleInRadians;
-      if (index == 0)
-        value.value_cameraX.innerHTML = angleInDegrees;
-      else if (index == 1)
-        value.value_cameraY.innerHTML = angleInDegrees;
-      else
-        value.value_cameraZ.innerHTML = angleInDegrees;
+      params.cameraAngleRadians = angleInRadians;
+      value.value_camera.innerHTML = angleInDegrees;
       modelViewMatrix = drawScene(gl, params);
     };
   }
@@ -232,9 +225,7 @@ window.onclick = function(event) {
     value.value_scaleY.innerHTML = defParams.scale[1];
     value.value_scaleZ.innerHTML = defParams.scale[2];
     value.value_zoom.innerHTML = defParams.zoom;
-    value.value_cameraX.innerHTML = radToDeg(defParams.cameraAngleRadians[0]);
-    value.value_cameraY.innerHTML = radToDeg(defParams.cameraAngleRadians[1]);
-    value.value_cameraZ.innerHTML = radToDeg(defParams.cameraAngleRadians[2]);
+    value.value_camera.innerHTML = radToDeg(defParams.cameraAngleRadians);
     value.value_cameraR.innerHTML = defParams.cameraRadius;
     value.value_fudgeFactor.innerHTML = defParams.fudgeFactor;
 
@@ -249,9 +240,7 @@ window.onclick = function(event) {
     slider.slider_scaleY.value = defParams.scale[1];
     slider.slider_scaleZ.value = defParams.scale[2];
     slider.slider_zoom.value = defParams.zoom;
-    slider.slider_cameraX.value = radToDeg(defParams.cameraAngleRadians[0]);
-    slider.slider_cameraY.value = radToDeg(defParams.cameraAngleRadians[1]);
-    slider.slider_cameraZ.value = radToDeg(defParams.cameraAngleRadians[2]);
+    slider.slider_camera.value = radToDeg(defParams.cameraAngleRadians);
     slider.slider_cameraR.value = defParams.cameraRadius;
   }
 
@@ -279,7 +268,7 @@ window.onclick = function(event) {
     params.rotation = [...defParams.rotation];
     params.scale = [...defParams.scale];
     params.zoom = defParams.zoom;
-    params.cameraAngleRadians = [...defParams.cameraAngleRadians];
+    params.cameraAngleRadians = defParams.cameraAngleRadians;
     params.cameraRadius = defParams.cameraRadius;
     params.fudgeFactor = defParams.fudgeFactor;
     params.projType = defParams.projType;
