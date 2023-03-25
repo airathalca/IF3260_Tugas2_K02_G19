@@ -15,6 +15,7 @@ Website ini menyediakan kanvas digital pada browser sedemikian sehingga pada kan
 - Help
 
 ## Fitur Bonus
+- Load lebih dari 1 model
 - Fitur Save Model
 
 ## Models

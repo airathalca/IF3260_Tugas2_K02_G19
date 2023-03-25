@@ -66,7 +66,7 @@
       <div class="modal-content">
         <span class="close" id="closeSpan">&times;</span>
         <h1>Load Model</h1>
-        <p>Memuat model dari file .json dengan format di bawah ini dan menampilkan hasil rendernya pada canvas.</p>
+        <p>Memuat model dari file .json dengan format di bawah ini dan menampilkan hasil rendernya pada canvas. Load kami bisa memuat lebih dari satu model sehingga akan timpang tindih apabila load ada objek lain. Jika ingin mengganti model, dapat clear canvas terlebih dahulu saja.</p>
         <pre>
         {
           posistions: [ // vertices ],
@@ -106,6 +106,9 @@
         
         <h1>Save</h1>
         <p>Apabila selesai melakukan transformasi dari sebuah model, maka bisa menekan tombol save yang disediakan di paling kanan bawah. Model terbaru akan terdownload pada perangkat pengguna dengan nama model.json </p>
+
+        <h1>Clear Canvas</h1>
+        <p>Untuk menghapus semua model yang sudah di load</p>
 
       </div>
     </div>
