@@ -114,10 +114,7 @@ export function drawScene(gl, params) {
     var modelViewMatrix = mat4.multiply(viewMatrix, modelMatrix);
 
     var normalMatrix = mat4.inverse(modelViewMatrix);
-    normalMatrix = mat4.transpose(normalMatrix);
-    normalMatrix = mat4.multiply(normalMatrix, mat4.xRotate(params.cameraAngleRadians[0]));
-    normalMatrix = mat4.multiply(normalMatrix, mat4.yRotate(params.cameraAngleRadians[1]));
-    normalMatrix = mat4.multiply(normalMatrix, mat4.zRotate(params.cameraAngleRadians[2]));
+    normalMatrix = mat4.multiply(normalMatrix, mat4.yRotate(params.cameraAngleRadians));
 
     gl.uniformMatrix4fv(projLocation, false, projMatrix);
     gl.uniformMatrix4fv(viewLocation, false, viewMatrix);
