@@ -88,9 +88,13 @@ window.onclick = function(event) {
       reader.onload = function(event) {
         var contents = event.target.result;
         var data = JSON.parse(contents);
-        params.hollowObject.positions.push(...data.positions);
-        params.hollowObject.colors.push(...data.colors);
-        params.hollowObject.normals.push(...data.normals);
+        if (params.hollowObject.positions.length === 0) {
+          params.hollowObject = data;
+        } else {
+          params.hollowObject.positions = params.hollowObject.positions.concat(data.positions);
+          params.hollowObject.colors = params.hollowObject.colors.concat(data.colors);
+          params.hollowObject.normals = params.hollowObject.normals.concat(data.normals);
+        }
         params.center = centerpoint(params.hollowObject);
         reset();
       };
