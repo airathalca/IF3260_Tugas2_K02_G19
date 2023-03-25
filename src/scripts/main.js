@@ -1,5 +1,5 @@
 import { drawScene, createProgram } from './script.js';
-import { model_cube } from '../models/model_cube.js';
+import { model_cube } from '../default_model/model_cube.js';
 import { degToRad, radToDeg } from './helper.js';
 import { value, slider, checkbox, button, radio } from './querySelector.js';
 import { modal, openModal, closeModal } from './help.js';
