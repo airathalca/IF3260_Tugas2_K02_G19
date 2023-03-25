@@ -39,11 +39,11 @@ window.onclick = function(event) {
   }
 
   var defParams = {
-    translation: [...params.translation],
-    rotation: [...params.rotation],
-    scale: [...params.scale],
+    translation: [0, 0, 0],
+    rotation: [degToRad(0), degToRad(0), degToRad(0)],
+    scale: [1, 1, 1],
     zoom: 1.0,
-    cameraAngleRadians: [...params.cameraAngleRadians],
+    cameraAngleRadians: [degToRad(0), degToRad(0), degToRad(0)],
     cameraRadius: 200.0,
     fudgeFactor: 1,
     projType: "perspective",
